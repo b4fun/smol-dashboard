@@ -97,3 +97,38 @@ npx shadcn@latest add b4fun/smol-dashboard/app-shell
 ```
 
 Explore **Layout / App Shell** in Storybook. Run `npx playwright install chromium` once, then `npm run test:a11y` for keyboard, responsive layout, and axe accessibility checks. The test runner starts Storybook automatically.
+
+## Breadcrumb header
+
+Region 5 uses the reusable `AppShellHeader`. Set `breadcrumbs` on `AppShell` to
+show linked ancestor levels before the current page `title`:
+
+```tsx
+<AppShell
+  brand="My App"
+  title="Launch checklist"
+  navigation={navigation}
+  breadcrumbs={[
+    { label: "Workspace", href: "/" },
+    { label: "Website refresh", href: "/projects/website-refresh" },
+  ]}
+  headerActions={<Button>Share</Button>}
+>
+  <YourPage />
+</AppShell>
+```
+
+Breadcrumbs contain ancestors only; the title supplies the final, non-linked
+current page and level-one heading. Ancestors support an optional decorative
+`icon`. Intermediate levels collapse behind an ellipsis and expand on hover, keyboard focus, or tap. Escape collapses them. Breadcrumbs scroll horizontally when they overflow; action buttons stay on the right. Routing remains the consuming app's
+responsibility.
+
+You can also import `AppShellHeader` directly, with `title`, `breadcrumbs`,
+`leading`, and `actions` props, or copy it separately through the registry:
+
+```sh
+npx shadcn@latest add b4fun/smol-dashboard/app-shell-header
+```
+
+The registry command becomes available after these changes are pushed. Storybook
+includes **Layout / App Shell Header** and **Layout / App Shell / With Breadcrumbs**.

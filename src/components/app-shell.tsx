@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import { AppShellHeader, type AppShellBreadcrumb } from "@/components/app-shell-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ export interface AppShellProps extends React.ComponentPropsWithoutRef<"div"> {
   brand: React.ReactNode;
   brandHref?: string;
   title: string;
+  breadcrumbs?: AppShellBreadcrumb[];
   navigation: AppShellNavGroup[];
   sidebarFooter?: React.ReactNode;
   headerActions?: React.ReactNode;
@@ -29,7 +31,7 @@ export interface AppShellProps extends React.ComponentPropsWithoutRef<"div"> {
 const focus = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
 export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
-  ({ brand, brandHref = "/", title, navigation, sidebarFooter, headerActions, children, className, ...props }, ref) => {
+  ({ brand, brandHref = "/", title, breadcrumbs, navigation, sidebarFooter, headerActions, children, className, ...props }, ref) => {
     const sidebarId = React.useId();
     const mainId = React.useId();
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -98,18 +100,23 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
           {sidebarFooter && <div data-slot="app-shell-footer" className={cn("mt-auto shrink-0 border-t border-border pt-2", !desktopOpen && "md:hidden")}>{sidebarFooter}</div>}
         </aside>
         <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-background md:rounded-xl md:border md:border-border md:shadow-sm">
-          <header data-slot="app-shell-header" className="flex min-h-16 shrink-0 flex-wrap items-center gap-2 border-b border-border px-2 py-3 md:px-3">
-            <Button
-              variant="ghost" size="icon" className="md:hidden"
-              aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
-              aria-expanded={mobileOpen} aria-controls={sidebarId}
-              onClick={() => setMobileOpen((open) => !open)}
-            >{toggleIcon}</Button>
-            <span aria-hidden="true" className="h-5 w-px bg-border md:hidden" />
-            <h1 className="min-w-0 flex-1 text-base font-semibold">{title}</h1>
-            {headerActions && <div className="flex flex-wrap items-center gap-2">{headerActions}</div>}
-          </header>
-          <main data-slot="app-shell-content" id={mainId} tabIndex={-1} className="min-h-0 flex-1 overflow-auto p-4 focus:outline-none md:p-6">{children}</main>
+          <AppShellHeader
+            title={title}
+            breadcrumbs={breadcrumbs}
+            actions={headerActions}
+            leading={
+              <>
+                <Button
+                  variant="ghost" size="icon" className="md:hidden"
+                  aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+                  aria-expanded={mobileOpen} aria-controls={sidebarId}
+                  onClick={() => setMobileOpen((open) => !open)}
+                >{toggleIcon}</Button>
+                <span aria-hidden="true" className="h-5 w-px bg-border md:hidden" />
+              </>
+            }
+          />
+          <main data-slot="app-shell-content" id={mainId} tabIndex={0} className="min-h-0 flex-1 overflow-auto p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset md:p-6">{children}</main>
         </div>
       </div>
     );

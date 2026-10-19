@@ -40,6 +40,25 @@
         {
           "path": "src/components/ui/button.tsx",
           "type": "registry:ui"
+        },
+        {
+          "path": "src/components/app-shell-header.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "app-shell-header",
+      "type": "registry:component",
+      "title": "App Shell Header",
+      "description": "Dashboard header with ancestor breadcrumbs, current page heading, and action slots.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/app-shell-header.tsx",
+          "type": "registry:component"
         }
       ]
     }

@@ -89,3 +89,58 @@ test("shell fills available height and content scrolls independently", async ({ 
   expect(await header.boundingBox()).toEqual(initialHeader);
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(page.viewportSize()!.height);
 });
+
+for (const width of [1280, 375]) {
+  test(`breadcrumb header at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 812 });
+    await page.goto("/iframe.html?id=layout-app-shell--with-breadcrumbs&viewMode=story");
+    const breadcrumb = page.getByRole("navigation", { name: "Breadcrumb", exact: true });
+    await expect(breadcrumb.getByRole("link")).toHaveCount(1);
+    await breadcrumb.focus();
+    await expect(breadcrumb.getByRole("link")).toHaveCount(2);
+    await expect(breadcrumb.getByRole("link").nth(0)).toHaveAccessibleName("Workspace");
+    await expect(breadcrumb.getByRole("link").nth(1)).toHaveAccessibleName("Website refresh");
+    await expect(breadcrumb.locator('[aria-current="page"]')).toHaveText("Website refresh — Review the launch checklist");
+    const parent = breadcrumb.getByRole("link", { name: "Workspace" });
+    await parent.focus();
+    await page.keyboard.press("Tab");
+    await expect(breadcrumb.getByRole("link", { name: "Website refresh" })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/#website-refresh$/);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
+    await page.screenshot({ path: `test-results/breadcrumb-${width}.png`, fullPage: true });
+  });
+}
+
+for (const theme of ["light", "dark"]) {
+  test(`collapsed breadcrumbs and pinned actions (${theme})`, async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto(`/iframe.html?id=layout-app-shell-header--multiple-levels&viewMode=story&globals=theme:${theme}`);
+    const nav = page.getByRole("navigation", { name: "Breadcrumb", exact: true });
+    const expand = nav.getByRole("button", { name: "Show intermediate pages", includeHidden: true });
+    const actions = page.locator('[data-slot="app-shell-header-actions"]');
+    await expect(nav.getByRole("link")).toHaveCount(1);
+    await expect(expand).toHaveAttribute("aria-expanded", "false");
+    await expect(nav.locator('[aria-current="page"]')).toHaveText("Launch checklist");
+    const initialActions = await actions.boundingBox();
+    await nav.hover();
+    await expect(nav.getByRole("link")).toHaveCount(3);
+    await expect(expand).toBeHidden();
+    await page.mouse.move(0, 0);
+    await expect(nav.getByRole("link")).toHaveCount(1);
+    await expand.focus();
+    await page.keyboard.press("Enter");
+    await expect(nav.getByRole("link")).toHaveCount(3);
+    await expect(nav.getByRole("link", { name: "Projects" })).toBeFocused();
+    await nav.evaluate((element) => { element.scrollLeft = element.scrollWidth; });
+    expect(await nav.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+    expect(await actions.boundingBox()).toEqual(initialActions);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
+    await page.keyboard.press("Escape");
+    await expect(nav.getByRole("link", { name: "Workspace" })).toBeFocused();
+    await expect(nav.getByRole("link")).toHaveCount(1);
+    await expect(expand).toHaveAttribute("aria-expanded", "false");
+  });
+}

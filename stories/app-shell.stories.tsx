@@ -63,3 +63,13 @@ export const Minimal: Story = {
   args: { navigation: [{ label: "Workspace", items: [{ label: "Overview", icon: <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4"><path d="M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z" /></svg>, href: "#overview", active: true }] }], sidebarFooter: null, headerActions: null, children: <p>Your application content goes here.</p> },
 };
 export const Dark: Story = { globals: { theme: "dark" } };
+
+export const WithBreadcrumbs: Story = {
+  args: {
+    title: "Website refresh — Review the launch checklist",
+    breadcrumbs: [
+      { label: "Workspace", href: "#workspace" },
+      { label: "Website refresh", href: "#website-refresh", icon: <span>📁</span> },
+    ],
+  },
+};
