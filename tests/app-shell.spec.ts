@@ -97,6 +97,11 @@ for (const width of [1280, 375]) {
     const breadcrumb = page.getByRole("navigation", { name: "Breadcrumb", exact: true });
     await expect(breadcrumb.getByRole("link")).toHaveCount(1);
     await breadcrumb.focus();
+    await expect(breadcrumb.getByRole("link")).toHaveCount(1);
+    await breadcrumb.getByRole("link", { name: "Workspace" }).focus();
+    await page.keyboard.press("Tab");
+    await expect(breadcrumb.getByRole("button", { name: "Show intermediate pages" })).toBeFocused();
+    await page.keyboard.press("Enter");
     await expect(breadcrumb.getByRole("link")).toHaveCount(2);
     await expect(breadcrumb.getByRole("link").nth(0)).toHaveAccessibleName("Workspace");
     await expect(breadcrumb.getByRole("link").nth(1)).toHaveAccessibleName("Website refresh");
@@ -124,7 +129,11 @@ for (const theme of ["light", "dark"]) {
     await expect(expand).toHaveAttribute("aria-expanded", "false");
     await expect(nav.locator('[aria-current="page"]')).toHaveText("Launch checklist");
     const initialActions = await actions.boundingBox();
-    await nav.hover();
+    await nav.getByRole("link", { name: "Workspace" }).hover();
+    await expect(nav.getByRole("link")).toHaveCount(1);
+    await nav.locator('[aria-current="page"]').hover();
+    await expect(nav.getByRole("link")).toHaveCount(1);
+    await expand.hover();
     await expect(nav.getByRole("link")).toHaveCount(3);
     await expect(expand).toBeHidden();
     await page.mouse.move(0, 0);

@@ -31,7 +31,7 @@ export const Overflow: Story = {
   parameters: {
     docs: {
       description: {
-        story: "A narrow header with a deep path and long labels. Hover or focus the breadcrumb to reveal the middle levels, then scroll horizontally. The Share button stays on the right.",
+        story: "A narrow header with a deep path and long labels. Hover over or activate the ellipsis to reveal the middle levels, then scroll horizontally. The Share button stays on the right.",
       },
     },
   },

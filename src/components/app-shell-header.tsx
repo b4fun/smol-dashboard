@@ -54,9 +54,8 @@ export const AppShellHeader = React.forwardRef<HTMLElement, AppShellHeaderProps>
         {breadcrumbs.length > 0 ? (
           <nav aria-label="Breadcrumb" className={cn("min-w-0 flex-1 overflow-x-auto overscroll-x-contain rounded-md", focus)}
             tabIndex={0}
-            onPointerEnter={(event) => { if (event.pointerType === "mouse") { hovered.current = true; setExpanded(true); } }}
+            onPointerEnter={(event) => { if (event.pointerType === "mouse") { hovered.current = true; } }}
             onPointerLeave={(event) => { hovered.current = false; if (!event.currentTarget.contains(document.activeElement)) setExpanded(false); }}
-            onFocusCapture={(event) => { if (event.target !== disclosure.current) setExpanded(true); }}
             onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget) && !hovered.current) setExpanded(false); }}
             onKeyDown={(event) => {
               if (event.key === "Escape" && collapsible) {
@@ -71,6 +70,7 @@ export const AppShellHeader = React.forwardRef<HTMLElement, AppShellHeaderProps>
                 <li hidden={expanded} className={cn("shrink-0 items-center gap-2", expanded ? "hidden" : "flex")}>
                   <button ref={disclosure} type="button" aria-label="Show intermediate pages"
                     aria-expanded={expanded} aria-controls={breadcrumbs.slice(1).map((_, index) => `${middleId}-${index + 1}`).join(" ")}
+                    onPointerEnter={(event) => { if (event.pointerType === "mouse") setExpanded(true); }}
                     onClick={() => setExpanded(true)}
                     className={cn("inline-flex size-9 cursor-pointer items-center justify-center rounded-md hover:bg-accent", focus)}>
                     <span aria-hidden="true">…</span>

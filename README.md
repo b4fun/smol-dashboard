@@ -120,7 +120,7 @@ show linked ancestor levels before the current page `title`:
 
 Breadcrumbs contain ancestors only; the title supplies the final, non-linked
 current page and level-one heading. Ancestors support an optional decorative
-`icon`. Intermediate levels collapse behind an ellipsis and expand on hover, keyboard focus, or tap. Escape collapses them. Breadcrumbs scroll horizontally when they overflow; action buttons stay on the right. Routing remains the consuming app's
+`icon`. Intermediate levels collapse behind an ellipsis and expand when hovering over the ellipsis or activating it by keyboard or tap. Escape collapses them. Breadcrumbs scroll horizontally when they overflow; action buttons stay on the right. Routing remains the consuming app's
 responsibility.
 
 You can also import `AppShellHeader` directly, with `title`, `breadcrumbs`,
