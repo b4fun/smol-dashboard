@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "@b4fun/smol-dashboard",
+  "homepage": "https://github.com/b4fun/smol-dashboard",
+  "items": [
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "A minimal dashboard button with variants and sizes.",
+      "dependencies": ["class-variance-authority"],
+      "registryDependencies": ["utils"],
+      "files": [{ "path": "src/components/ui/button.tsx", "type": "registry:ui" }]
+    }
+  ]
+}
