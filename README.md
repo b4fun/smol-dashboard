@@ -66,3 +66,32 @@ Run `npm run storybook` and open http://localhost:6006 to explore the components
 Run `npm run build-storybook` to produce a deployable static explorer in `storybook-static/`.
 
 Add future examples as `stories/<component>.stories.tsx`; they are discovered automatically. Storybook uses source components and the same Tailwind theme as the library.
+
+## App shell
+
+`AppShell` provides a responsive dashboard layout inspired by [shadcn dashboard-01](https://ui.shadcn.com/view/new-york-v4/dashboard-01). Pass grouped navigation, a title, and your page content. Optional slots accept header actions and a sidebar footer. Navigation uses ordinary links, so it does not require a router; set `active` on the current item. Icons are optional decorative React nodes.
+
+```tsx
+import { AppShell } from "@b4fun/smol-dashboard";
+
+<AppShell
+  brand="My workspace"
+  title="Overview"
+  navigation={[{
+    label: "Workspace",
+    items: [{ label: "Overview", href: "/", active: true }],
+  }]}
+>
+  <p>Your application content</p>
+</AppShell>
+```
+
+The desktop toggle sits at the right of the brand row and collapses the sidebar to a 56px navigation rail. Supply an `icon` for each item; items without icons display their first letter. Full accessible names remain available when collapsed. Mobile navigation starts closed and expands inline. The shell includes a skip link, navigation landmark, current-page semantics, and named keyboard-operable toggles. Mount one shell per page and use level-two headings in its content.
+
+Registry install after pushing the changes:
+
+```sh
+npx shadcn@latest add b4fun/smol-dashboard/app-shell
+```
+
+Explore **Layout / App Shell** in Storybook. Run `npx playwright install chromium` once, then `npm run test:a11y` for keyboard, responsive layout, and axe accessibility checks. The test runner starts Storybook automatically.

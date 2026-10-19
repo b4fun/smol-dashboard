@@ -3,3 +3,39 @@
 @source "../src";
 @source "../stories";
 @source "./preview.tsx";
+
+/* Storybook-only reference markers; no annotation styles ship in the library. */
+.layout-annotations [data-slot^="app-shell-"] {
+  position: relative;
+  outline: 1px dashed #1d4ed8;
+  outline-offset: -1px;
+}
+
+.layout-annotations [data-slot^="app-shell-"]::after {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 0 0 0 6px;
+  background: #1d4ed8;
+  color: #fff;
+  font: 700 12px/1 system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.layout-annotations [data-slot="app-shell-sidebar"]::after { content: "1" / ""; }
+.layout-annotations [data-slot="app-shell-brand"]::after { content: "2" / ""; }
+.layout-annotations [data-slot="app-shell-navigation"]::after { content: "3" / ""; }
+.layout-annotations [data-slot="app-shell-footer"]::after { content: "4" / ""; }
+.layout-annotations [data-slot="app-shell-header"]::after { content: "5" / ""; }
+.layout-annotations [data-slot="app-shell-content"]::after { content: "6" / ""; }
+
+/* Keep the nested brand marker separate from the sidebar marker in rail mode. */
+.layout-annotations [data-slot="app-shell-brand"]::after {
+  top: auto;
+  bottom: 0;
+}
