@@ -86,6 +86,8 @@ import { AppShell } from "@b4fun/smol-dashboard";
 </AppShell>
 ```
 
+The shell fills the dynamic viewport height (`100dvh`), with independently scrollable content and navigation so the header and sidebar footer stay visible. Use `className="h-full"` inside a parent with a defined height.
+
 The desktop toggle sits at the right of the brand row and collapses the sidebar to a 56px navigation rail. Supply an `icon` for each item; items without icons display their first letter. Full accessible names remain available when collapsed. Mobile navigation starts closed and expands inline. The shell includes a skip link, navigation landmark, current-page semantics, and named keyboard-operable toggles. Mount one shell per page and use level-two headings in its content.
 
 Registry install after pushing the changes:

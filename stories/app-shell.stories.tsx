@@ -9,8 +9,8 @@ const meta = {
   parameters: { shell: true },
   decorators: [
     (Story) => (
-      <div className="layout-annotations">
-        <div className="border-b border-border bg-background px-4 py-3 text-foreground">
+      <div className="layout-annotations flex h-dvh flex-col">
+        <div className="shrink-0 border-b border-border bg-background px-4 py-3 text-foreground">
           <p className="mb-2 text-sm font-semibold">Layout reference</p>
           <ol className="flex list-inside list-decimal flex-wrap gap-x-6 gap-y-1 text-xs" aria-label="Layout region numbers">
             <li>Sidebar</li><li>Brand</li><li>Navigation</li>
@@ -18,11 +18,12 @@ const meta = {
           </ol>
           <p className="mt-2 text-xs">On mobile, open navigation to see regions 1–4. Optional regions appear when provided.</p>
         </div>
-        <Story />
+        <div className="min-h-0 flex-1"><Story /></div>
       </div>
     ),
   ],
   args: {
+    className: "h-full",
     brand: "◈ smol dashboard",
     brandHref: "#home",
     title: "Overview",

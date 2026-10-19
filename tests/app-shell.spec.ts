@@ -69,3 +69,23 @@ test("sidebar transition respects reduced motion", async ({ page }) => {
   await expect(brand).toHaveCSS("display", "flex");
   await expect(brand).toHaveCSS("visibility", "hidden");
 });
+
+test("shell fills available height and content scrolls independently", async ({ page }) => {
+  await page.goto(story);
+  const main = page.getByRole("main");
+  const header = page.locator('[data-slot="app-shell-header"]');
+  const initialHeader = await header.boundingBox();
+  const bounds = await main.boundingBox();
+  expect(bounds).not.toBeNull();
+  expect(Math.abs(bounds!.y + bounds!.height - (page.viewportSize()!.height - 9))).toBeLessThan(2);
+  await main.evaluate((element) => {
+    const content = document.createElement("div");
+    content.style.height = "2000px";
+    content.textContent = "Long page content";
+    element.append(content);
+    element.scrollTop = 500;
+  });
+  expect(await main.evaluate((element) => element.scrollTop)).toBe(500);
+  expect(await header.boundingBox()).toEqual(initialHeader);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(page.viewportSize()!.height);
+});

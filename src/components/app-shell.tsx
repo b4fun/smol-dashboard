@@ -42,7 +42,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
     );
 
     return (
-      <div ref={ref} className={cn("relative min-h-dvh bg-accent text-foreground md:flex md:p-2", className)} {...props}>
+      <div ref={ref} className={cn("relative flex h-dvh flex-col overflow-hidden bg-accent text-foreground md:flex-row md:p-2", className)} {...props}>
         <a href={`#${mainId}`} className={cn("sr-only z-10 rounded-md bg-background p-3 focus:not-sr-only focus:absolute focus:top-3 focus:left-3", focus)}>
           Skip to content
         </a>
@@ -50,12 +50,12 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
           id={sidebarId}
           data-slot="app-shell-sidebar"
           className={cn(
-            "flex-col gap-2 px-1 py-1 md:flex md:shrink-0 md:transition-[width] md:duration-200 md:ease-in-out md:motion-reduce:transition-none",
+            "max-h-[50dvh] min-h-0 shrink-0 flex-col gap-2 px-1 py-1 md:flex md:max-h-none md:transition-[width] md:duration-200 md:ease-in-out md:motion-reduce:transition-none",
             mobileOpen ? "flex" : "hidden",
             desktopOpen ? "md:w-64" : "md:w-14",
           )}
         >
-          <div data-slot="app-shell-brand" className="flex min-h-14 items-center gap-1 px-1">
+          <div data-slot="app-shell-brand" className="flex min-h-14 shrink-0 items-center gap-1 px-1">
             <a href={brandHref} className={cn("flex min-h-10 min-w-0 flex-1 items-center overflow-hidden rounded-md text-lg font-semibold tracking-tight whitespace-nowrap transition-[opacity,visibility] duration-150 motion-reduce:transition-none", !desktopOpen && "md:invisible md:pointer-events-none md:opacity-0", focus)}>
               {brand}
             </a>
@@ -66,7 +66,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
               onClick={() => setDesktopOpen((open) => !open)}
             >{toggleIcon}</Button>
           </div>
-          <nav data-slot="app-shell-navigation" aria-label="Main navigation" className="flex flex-1 flex-col gap-6">
+          <nav data-slot="app-shell-navigation" aria-label="Main navigation" className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto">
             {navigation.map((group, groupIndex) => (
               <div key={group.label}>
                 <h2 id={`${sidebarId}-${groupIndex}`} className={cn("mb-2 px-3 text-xs font-medium", !desktopOpen && "md:sr-only")}>{group.label}</h2>
@@ -95,10 +95,10 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
               </div>
             ))}
           </nav>
-          {sidebarFooter && <div data-slot="app-shell-footer" className={cn("mt-auto border-t border-border pt-2", !desktopOpen && "md:hidden")}>{sidebarFooter}</div>}
+          {sidebarFooter && <div data-slot="app-shell-footer" className={cn("mt-auto shrink-0 border-t border-border pt-2", !desktopOpen && "md:hidden")}>{sidebarFooter}</div>}
         </aside>
-        <div className="flex min-w-0 flex-1 flex-col bg-background md:rounded-xl md:border md:border-border md:shadow-sm">
-          <header data-slot="app-shell-header" className="flex min-h-16 flex-wrap items-center gap-2 border-b border-border px-2 py-3 md:px-3">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-background md:rounded-xl md:border md:border-border md:shadow-sm">
+          <header data-slot="app-shell-header" className="flex min-h-16 shrink-0 flex-wrap items-center gap-2 border-b border-border px-2 py-3 md:px-3">
             <Button
               variant="ghost" size="icon" className="md:hidden"
               aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
@@ -109,7 +109,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
             <h1 className="min-w-0 flex-1 text-base font-semibold">{title}</h1>
             {headerActions && <div className="flex flex-wrap items-center gap-2">{headerActions}</div>}
           </header>
-          <main data-slot="app-shell-content" id={mainId} tabIndex={-1} className="flex-1 p-4 focus:outline-none md:p-6">{children}</main>
+          <main data-slot="app-shell-content" id={mainId} tabIndex={-1} className="min-h-0 flex-1 overflow-auto p-4 focus:outline-none md:p-6">{children}</main>
         </div>
       </div>
     );
