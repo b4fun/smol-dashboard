@@ -27,6 +27,7 @@ for (const theme of ["light", "dark"]) {
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     await expect(toggle).toHaveCSS("cursor", "pointer");
     await expect(toggle).not.toHaveCSS("box-shadow", "none");
+    await expect(page.locator('[data-slot="app-shell-brand"] a')).toHaveCSS("opacity", "1");
     const results = await new AxeBuilder({ page }).include("#storybook-root").analyze();
     expect(results.violations).toEqual([]);
     await page.screenshot({ path: `test-results/app-shell-${theme}.png`, fullPage: true });
