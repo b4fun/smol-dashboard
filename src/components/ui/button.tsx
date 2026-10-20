@@ -6,12 +6,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 export const buttonVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-default disabled:opacity-50",
+  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-default disabled:opacity-50",
   {
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        outline: "border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
+        outline: "border border-foreground/45 bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
         ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
       },
       size: {
@@ -19,6 +19,8 @@ export const buttonVariants = cva(
         sm: "h-8 px-3 text-xs",
         lg: "h-10 px-8",
         icon: "size-9",
+        "icon-sm": "size-8",
+        "icon-lg": "size-10",
       },
     },
     defaultVariants: { variant: "default", size: "default" },
@@ -26,17 +28,20 @@ export const buttonVariants = cva(
 );
 
 export type ButtonProps = React.ComponentPropsWithoutRef<"button"> &
-  VariantProps<typeof buttonVariants>;
+  VariantProps<typeof buttonVariants> & { icon?: React.ReactNode };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, type = "button", ...props }, ref) => (
+  ({ className, variant, size, icon, children, type = "button", ...props }, ref) => (
     <button
       ref={ref}
       type={type}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+    >
+      {icon && <span aria-hidden="true" data-slot="button-icon" className="pointer-events-none inline-flex size-4 shrink-0 items-center justify-center [&_svg]:size-full">{icon}</span>}
+      {children}
+    </button>
   ),
 );
 

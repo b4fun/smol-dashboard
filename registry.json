@@ -48,6 +48,36 @@
       ]
     },
     {
+      "name": "status-indicator",
+      "type": "registry:ui",
+      "title": "Status Indicator",
+      "description": "Hollow status ring with success, failed, warning, and neutral states and an accessible name.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/status-indicator.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "collapsible-list",
+      "type": "registry:component",
+      "title": "Collapsible List",
+      "description": "Grouped disclosure list with item counts, decorative icons, details, and trailing metadata.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/collapsible-list.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "app-shell-header",
       "type": "registry:component",
       "title": "App Shell Header",
