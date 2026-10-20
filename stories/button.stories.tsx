@@ -32,6 +32,20 @@ function ActionButtonsExample({ disabled }: { disabled?: boolean }) {
   );
 }
 
+function PublishReleaseExample() {
+  const [busy, setBusy] = useState(false);
+  const [requests, setRequests] = useState(0);
+  const [published, setPublished] = useState(false);
+  return <div className="space-y-4">
+    <div className="flex flex-wrap gap-2">
+      <Button busy={busy} busyLabel="Publishing…" onClick={() => { setRequests((count) => count + 1); setPublished(false); setBusy(true); }}>Publish release</Button>
+      <Button variant="outline" disabled={!busy} onClick={() => { setBusy(false); setPublished(true); }}>Finish publishing</Button>
+    </div>
+    <p role="status" className="text-sm">{busy ? "Publishing release…" : published ? "Release published." : "Ready to publish."}</p>
+    <p className="text-sm text-foreground/70">Requests started: {requests}</p>
+  </div>;
+}
+
 const meta = {
   title: "Components/Button",
   component: Button,
@@ -39,7 +53,7 @@ const meta = {
   args: { children: "Open dashboard", variant: "default", size: "default", disabled: false },
   argTypes: {
     children: { control: "text" },
-    variant: { control: "select", options: ["default", "outline", "ghost"] },
+    variant: { control: "select", options: ["default", "outline", "ghost", "destructive"] },
     size: { control: "select", options: ["default", "sm", "lg", "icon", "icon-sm", "icon-lg"] },
     disabled: { control: "boolean" },
     icon: { control: false },
@@ -53,6 +67,11 @@ export const Playground: Story = {};
 export const Outline: Story = { args: { variant: "outline" } };
 export const Ghost: Story = { args: { variant: "ghost" } };
 export const Disabled: Story = { args: { disabled: true } };
+export const Destructive: Story = { args: { variant: "destructive", children: "Delete report" } };
+export const Busy: Story = { args: { busy: true, busyLabel: "Publishing…", children: "Publish release" } };
+export const BusyIcon: Story = { args: { busy: true, size: "icon-sm", children: undefined, "aria-label": "Refreshing reports" } };
+export const BusyInteraction: Story = { render: () => <PublishReleaseExample /> };
+export const DarkBusy: Story = { ...BusyInteraction, globals: { theme: "dark" } };
 export const WithIcon: Story = {
   args: { variant: "outline", size: "sm", icon: <PauseIcon />, children: "Pause" },
 };
@@ -77,7 +96,7 @@ export const DarkActions: Story = { ...Actions, globals: { theme: "dark" } };
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
-      {(["default", "outline", "ghost"] as const).map((variant) => (
+      {(["default", "outline", "ghost", "destructive"] as const).map((variant) => (
         <div key={variant} className="flex flex-wrap items-center gap-4">
           <span className="w-20 text-sm capitalize">{variant}</span>
           <Button variant={variant} size="sm">Small</Button>

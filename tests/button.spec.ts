@@ -90,7 +90,7 @@ for (const theme of ["light", "dark"]) {
   test(`all variants and sizes have accessible names (${theme})`, async ({ page }) => {
     await page.goto(`${story}--all-variants&viewMode=story&globals=theme:${theme}`);
     const buttons = page.getByRole("button");
-    await expect(buttons).toHaveCount(24);
+    await expect(buttons).toHaveCount(32);
     for (const button of await buttons.all()) await expect(button).not.toHaveAccessibleName("");
     expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
   });

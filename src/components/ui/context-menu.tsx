@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { Slottable } from "@radix-ui/react-slot";
-import { MenuModalContext, useModalMenuRef } from "@/components/ui/menu-accessibility";
+import { ModalContext, useModalContentRef } from "@/components/ui/overlay-accessibility";
 
 import { cn } from "@/lib/utils";
 import {
@@ -14,7 +14,7 @@ import {
 export type ContextMenuProps = React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Root>;
 
 export function ContextMenu({ modal = true, ...props }: ContextMenuProps) {
-  return <MenuModalContext.Provider value={modal}><ContextMenuPrimitive.Root modal={modal} {...props} /></MenuModalContext.Provider>;
+  return <ModalContext.Provider value={modal}><ContextMenuPrimitive.Root modal={modal} {...props} /></ModalContext.Provider>;
 }
 export const ContextMenuGroup = ContextMenuPrimitive.Group;
 export const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
@@ -71,7 +71,7 @@ export type ContextMenuContentProps = React.ComponentPropsWithoutRef<typeof Cont
 
 export const ContextMenuContent = React.forwardRef<HTMLDivElement, ContextMenuContentProps>(
   ({ className, container, forceMount, collisionPadding = 8, ...props }, ref) => {
-    const contentRef = useModalMenuRef(ref);
+    const contentRef = useModalContentRef(ref);
     return (
       <ContextMenuPrimitive.Portal container={container} forceMount={forceMount}>
         <ContextMenuPrimitive.Content ref={contentRef} forceMount={forceMount} collisionPadding={collisionPadding}

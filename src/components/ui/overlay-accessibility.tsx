@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
 
-export const MenuModalContext = React.createContext(true);
+export const ModalContext = React.createContext(true);
 
 // Keep inert ownership independent of the primitive's aria-hidden bookkeeping.
 const backgroundLocks = new WeakMap<HTMLElement, { count: number; wasInert: boolean }>();
@@ -37,14 +37,14 @@ function makeBackgroundInert(content: HTMLElement) {
   };
 }
 
-export function useModalMenuRef(forwardedRef: React.ForwardedRef<HTMLDivElement>): React.RefCallback<HTMLDivElement> {
-  const modal = React.useContext(MenuModalContext);
+export function useModalContentRef(forwardedRef: React.ForwardedRef<HTMLDivElement>): React.RefCallback<HTMLDivElement> {
+  const modal = React.useContext(ModalContext);
   const [content, setContent] = React.useState<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     if (!modal || !content) return;
     let release: (() => void) | undefined;
-    // Keep background controls unfocusable while submenu focus scopes are active.
+    // Keep background controls unfocusable while nested overlays pause the parent's focus scope.
     const update = () => {
       release?.();
       release = content.dataset.state === "open" ? makeBackgroundInert(content) : undefined;

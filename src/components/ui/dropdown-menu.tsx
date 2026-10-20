@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { Slottable } from "@radix-ui/react-slot";
-import { MenuModalContext, useModalMenuRef } from "@/components/ui/menu-accessibility";
+import { ModalContext, useModalContentRef } from "@/components/ui/overlay-accessibility";
 
 import { cn } from "@/lib/utils";
 import {
@@ -14,7 +14,7 @@ import {
 export type DropdownMenuProps = React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Root>;
 
 export function DropdownMenu({ modal = true, ...props }: DropdownMenuProps) {
-  return <MenuModalContext.Provider value={modal}><DropdownMenuPrimitive.Root modal={modal} {...props} /></MenuModalContext.Provider>;
+  return <ModalContext.Provider value={modal}><DropdownMenuPrimitive.Root modal={modal} {...props} /></ModalContext.Provider>;
 }
 export const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
@@ -42,7 +42,7 @@ export type DropdownMenuContentProps = React.ComponentPropsWithoutRef<typeof Dro
 
 export const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenuContentProps>(
   ({ className, container, forceMount, align = "end", sideOffset = 4, collisionPadding = 8, ...props }, ref) => {
-    const contentRef = useModalMenuRef(ref);
+    const contentRef = useModalContentRef(ref);
     return (
       <DropdownMenuPrimitive.Portal container={container} forceMount={forceMount}>
         <DropdownMenuPrimitive.Content ref={contentRef} forceMount={forceMount} align={align} sideOffset={sideOffset} collisionPadding={collisionPadding}

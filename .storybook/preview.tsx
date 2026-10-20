@@ -24,7 +24,7 @@ const preview: Preview = {
   decorators: [
     (Story, context) => (
       <div className={context.globals.theme === "dark" ? "dark" : ""}>
-        <div className={context.parameters.shell ? "min-h-64 bg-background text-foreground" : "min-h-64 bg-background p-8 text-foreground"}>
+        <div className={context.parameters.shell ? "min-h-64 bg-background text-foreground" : "min-h-dvh bg-background p-8 text-foreground"}>
           <Story />
         </div>
       </div>
