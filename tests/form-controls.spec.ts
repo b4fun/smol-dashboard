@@ -27,6 +27,10 @@ for (const theme of ["light", "dark"]) {
     await page.keyboard.press("ArrowDown");
     const menu = page.getByRole("menu", { name: "Choose report template" });
     await expect(menu).toBeVisible();
+    const inputBounds = await input.evaluate((element) => element.getBoundingClientRect().toJSON());
+    const menuBounds = await menu.evaluate((element) => element.getBoundingClientRect().toJSON());
+    expect(Math.abs(menuBounds.width - inputBounds.width)).toBeLessThanOrEqual(1);
+    expect(Math.abs(menuBounds.x - inputBounds.x)).toBeLessThanOrEqual(1);
     const disabled = menu.getByRole("menuitemradio", { name: /^Audit pack/ });
     await expect(disabled).toHaveAttribute("aria-disabled", "true");
     await disabled.evaluate((element: HTMLElement) => element.click());
@@ -103,6 +107,11 @@ test("disabled preset input disables both controls", async ({ page }) => {
 test("native select supports keyboard selection and disabled options", async ({ page }) => {
   await page.goto("/iframe.html?id=forms-select--playground&viewMode=story");
   const select = page.getByRole("combobox", { name: "File format" });
+  const chevron = page.locator('[data-slot="select-chevron"]');
+  await expect(chevron).toHaveAttribute("aria-hidden", "true");
+  const selectBounds = await select.evaluate((element) => element.getBoundingClientRect().toJSON());
+  const chevronBounds = await chevron.evaluate((element) => element.getBoundingClientRect().toJSON());
+  expect(Math.abs(selectBounds.right - chevronBounds.right - 12)).toBeLessThanOrEqual(1);
   await select.focus();
   await page.keyboard.press("c");
   await page.keyboard.press("Enter");

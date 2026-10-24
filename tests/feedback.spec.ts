@@ -40,13 +40,28 @@ for (const theme of ["light", "dark"]) {
     await page.goto(`/iframe.html?id=feedback-operation-result--interactive&viewMode=story&globals=theme:${theme}`);
     await expect(page.getByRole("status", { name: "Preparing report export" })).toBeVisible();
     await expect(page.getByRole("status")).toHaveCount(1);
+    const expectIconAlignedWithTitle = async () => {
+      const icon = page.locator('[data-slot="operation-result-icon"]');
+      const title = page.locator('[data-slot="operation-result"] h2');
+      const [iconBounds, titleBounds] = await Promise.all([
+        icon.evaluate((element) => element.getBoundingClientRect().toJSON()),
+        title.evaluate((element) => element.getBoundingClientRect().toJSON()),
+      ]);
+      expect(Math.abs(iconBounds.width - 20)).toBeLessThanOrEqual(1);
+      expect(Math.abs(iconBounds.height - 24)).toBeLessThanOrEqual(1);
+      expect(Math.abs(iconBounds.left + iconBounds.width / 2 - (titleBounds.left - 22))).toBeLessThanOrEqual(1);
+      expect(Math.abs(iconBounds.top + iconBounds.height / 2 - (titleBounds.top + titleBounds.height / 2))).toBeLessThanOrEqual(1);
+    };
+    await expectIconAlignedWithTitle();
     await page.getByRole("button", { name: "Check progress" }).click();
     await expect(page.getByRole("status", { name: "Report ready to download" })).toBeVisible();
+    await expectIconAlignedWithTitle();
     await expect(page.getByRole("link", { name: "Download report" })).toHaveAttribute("download", "quarterly-revenue.csv");
     expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
     await page.getByRole("button", { name: "Prepare another report" }).click();
     await page.getByRole("button", { name: "Simulate failure" }).click();
     await expect(page.getByRole("alert", { name: "Report export failed" })).toBeVisible();
+    await expectIconAlignedWithTitle();
     await expect(page.getByRole("status")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Try again" })).toHaveCSS("transition-duration", "0s");
     expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);

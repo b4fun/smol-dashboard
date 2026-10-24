@@ -2,6 +2,7 @@
   "name": "@b4fun/smol-dashboard",
   "version": "0.1.0",
   "description": "Minimal dashboard component library and shadcn registry.",
+  "license": "MIT",
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -29,7 +30,8 @@
     "prepack": "npm run typecheck && npm run build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test:a11y": "playwright test"
+    "test:a11y": "playwright test",
+    "test:registry": "npm run build:registry && node scripts/test-registry.mjs"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

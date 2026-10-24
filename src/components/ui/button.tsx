@@ -8,7 +8,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 // Foreground and background changes must stay atomic when switching variants.
 export const buttonVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-default disabled:opacity-50",
+  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-sans text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-default disabled:opacity-50",
   {
     variants: {
       variant: {

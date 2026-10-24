@@ -10,9 +10,12 @@ for (const theme of ["light", "dark"]) {
     const draft = group.getByRole("button", { name: "Draft, 2 items", exact: true });
     const review = group.getByRole("button", { name: "In review, 2 items", exact: true });
     const archived = group.getByRole("button", { name: "Archived, 0 items", exact: true });
+    expect(await draft.evaluate((button) => getComputedStyle(button).fontFamily)).toMatch(/^-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans"/);
     await expect(all).toHaveAttribute("aria-pressed", "true");
     await expect(archived).toBeDisabled();
     await expect(archived).toContainText("0");
+    await expect(all.locator("span").filter({ hasText: "6" })).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(draft.locator("span").filter({ hasText: "2" })).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await all.focus();
     await page.keyboard.press("Tab");
     await expect(draft).toBeFocused();

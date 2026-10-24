@@ -64,3 +64,5 @@ export { CollapsibleList, type CollapsibleListProps, type CollapsibleListGroup, 
 export { AppShell, type AppShellProps, type AppShellNavItem, type AppShellNavGroup } from "./components/app-shell";
 
 export { AppShellHeader, type AppShellHeaderProps, type AppShellBreadcrumb } from "./components/app-shell-header";
+
+export { Chat, type ChatProps, type ChatMessage, type ChatToolMessage } from "./components/chat";
