@@ -1,158 +1,44 @@
-# @b4fun/smol-dashboard
+# smol-dashboard
 
-Minimal React component library and shadcn/ui registry. Requires React 18 or 19 and Tailwind CSS 4.
+A shadcn/ui registry of dashboard components. Add individual items to an
+application initialized with [shadcn/ui](https://ui.shadcn.com/).
 
-## Development
+## Install an item
 
-Install Node.js 24 LTS (includes npm), then restore the locked dependencies:
-
-```sh
-npm ci
-```
-
-If Node.js was just installed, reopen your terminal so `node` and `npm` are on
-`PATH`.
-
-Check the project and generate its build outputs:
+For example, to add the Button:
 
 ```sh
-npm run typecheck
-npm run build
-npm run build-storybook
+npx shadcn@latest add b4fun/smol-dashboard/button
 ```
 
-`npm run build` creates the ESM library and TypeScript declarations in `dist/`, then generates installable registry items in `public/r/`. `npm run dev` watches the library TypeScript sources.
+Available items:
 
-For interactive component development, run `npm run storybook` and open
-http://localhost:6006. No backend service or environment variables are required.
+`alert`, `alert-dialog`, `app-shell`, `app-shell-header`, `button`,
+`collapsible-list`, `context-menu`, `dialog`, `dropdown-menu`, `empty-state`,
+`field`, `filter-pills`, `input`, `operation-result`, `preset-input`,
+`select`, `skeleton`, `spinner`, and `status-indicator`.
 
-Install the test browser once, then run the accessibility and interaction suite:
+The CLI copies the component and its registry dependencies into your
+application, installs required packages, and adapts imports to your shadcn
+theme and `utils` helper.
 
-```sh
-npx playwright install chromium
-npm run test:a11y
-```
+## Use a self-hosted registry
 
-The test runner starts Storybook automatically, or reuses an existing server on
-port 6006 when not running in CI.
-
-## Use as a library
-
-Install the package from npm after publishing, or install a tarball created with `npm pack`:
-
-```sh
-npm install @b4fun/smol-dashboard
-```
-
-In your application's main CSS file (adjust the source path relative to that file):
-
-```css
-@import "tailwindcss";
-@import "@b4fun/smol-dashboard/styles.css";
-@source "../node_modules/@b4fun/smol-dashboard/dist";
-```
-
-The source directive lets Tailwind discover the package's utility classes. The stylesheet provides neutral light and dark theme tokens and a cross-platform system font stack based on [GitHub Primer](https://github.com/primer/css/blob/main/src/support/variables/typography.scss); it uses the native UI font where available and requires no downloaded font. Add `.dark` to an ancestor to use the dark theme. Override `--fontStack-sansSerif` to choose a different font. Applications with an existing shadcn theme can keep their own tokens and omit the package stylesheet.
-
-```tsx
-import { Button } from "@b4fun/smol-dashboard";
-
-export function Example() {
-  return <Button variant="outline" onClick={() => console.log("clicked")}>Open dashboard</Button>;
-}
-```
-
-Exports: `Button`, `ButtonProps`, `buttonVariants`, and `cn`. Button supports `default`, `outline`, and `ghost` variants and `default`, `sm`, `lg`, and `icon` sizes. It forwards its ref and defaults to `type="button"`; use `type="submit"` for form submission.
-
-## Use as a shadcn registry
-
-Build, then serve the `public/` directory with any static HTTP server. For example:
+Build the registry and serve the generated `public/` directory from any static
+HTTP server:
 
 ```sh
 npm run build:registry
 npx serve public -l 3000
 ```
 
-In a consuming app already initialized with shadcn/ui:
+Then install an item using its registry URL:
 
 ```sh
 npx shadcn@latest add http://localhost:3000/r/button.json
 ```
 
-The CLI copies the component into the consuming app, installs its dependencies, and uses the app's shadcn theme and `utils` helper. For remote installs, deploy `public/` to a static host and replace the localhost URL. No registry is hosted by this scaffold.
+Deploy `public/` to a static host and replace the local URL to use the registry
+remotely.
 
-To add a component, create it in `src/components/ui/`, export it from `src/index.ts`, add an item to `registry.json`, and rebuild. Use `@/lib/utils` in registry components so shadcn can rewrite imports for the consuming app.
-
-## Component explorer
-
-Run `npm run storybook` and open http://localhost:6006 to explore the components. The Button stories include an interactive playground, individual variants, a disabled state, an accessible icon button, and a grid of all variants and sizes. Use the Theme toolbar to switch between light and dark, and the Controls panel to edit props. The Docs page includes generated prop documentation and usage examples.
-
-Run `npm run build-storybook` to produce a deployable static explorer in `storybook-static/`.
-
-Add future examples as `stories/<component>.stories.tsx`; they are discovered automatically. Storybook uses source components and the same Tailwind theme as the library.
-
-## App shell
-
-`AppShell` provides a responsive dashboard layout inspired by [shadcn dashboard-01](https://ui.shadcn.com/view/new-york-v4/dashboard-01). Pass grouped navigation, a title, and your page content. Optional slots accept header actions and a sidebar footer. Navigation uses ordinary links, so it does not require a router; set `active` on the current item. Icons are optional decorative React nodes.
-
-```tsx
-import { AppShell } from "@b4fun/smol-dashboard";
-
-<AppShell
-  brand="My workspace"
-  title="Overview"
-  navigation={[{
-    label: "Workspace",
-    items: [{ label: "Overview", href: "/", active: true }],
-  }]}
->
-  <p>Your application content</p>
-</AppShell>
-```
-
-The shell fills the dynamic viewport height (`100dvh`), with independently scrollable content and navigation so the header and sidebar footer stay visible. Use `className="h-full"` inside a parent with a defined height.
-
-The desktop toggle sits at the right of the brand row and collapses the sidebar to a 56px navigation rail. Supply an `icon` for each item; items without icons display their first letter. Full accessible names remain available when collapsed. Mobile navigation starts closed and expands inline. The shell includes a skip link, navigation landmark, current-page semantics, and named keyboard-operable toggles. Mount one shell per page and use level-two headings in its content.
-
-Registry install after pushing the changes:
-
-```sh
-npx shadcn@latest add b4fun/smol-dashboard/app-shell
-```
-
-Explore **Layout / App Shell** in Storybook. Run `npx playwright install chromium` once, then `npm run test:a11y` for keyboard, responsive layout, and axe accessibility checks. The test runner starts Storybook automatically.
-
-## Breadcrumb header
-
-Region 5 uses the reusable `AppShellHeader`. Set `breadcrumbs` on `AppShell` to
-show linked ancestor levels before the current page `title`:
-
-```tsx
-<AppShell
-  brand="My App"
-  title="Launch checklist"
-  navigation={navigation}
-  breadcrumbs={[
-    { label: "Workspace", href: "/" },
-    { label: "Website refresh", href: "/projects/website-refresh" },
-  ]}
-  headerActions={<Button>Share</Button>}
->
-  <YourPage />
-</AppShell>
-```
-
-Breadcrumbs contain ancestors only; the title supplies the final, non-linked
-current page and level-one heading. Ancestors support an optional decorative
-`icon`. Intermediate levels collapse behind an ellipsis and expand when hovering over the ellipsis or activating it by keyboard or tap. Escape collapses them. Breadcrumbs scroll horizontally when they overflow; action buttons stay on the right. Routing remains the consuming app's
-responsibility.
-
-You can also import `AppShellHeader` directly, with `title`, `breadcrumbs`,
-`leading`, and `actions` props, or copy it separately through the registry:
-
-```sh
-npx shadcn@latest add b4fun/smol-dashboard/app-shell-header
-```
-
-The registry command becomes available after these changes are pushed. Storybook
-includes **Layout / App Shell Header** and **Layout / App Shell / With Breadcrumbs**.
+For development, package usage, and component examples, see [dev.md](dev.md).

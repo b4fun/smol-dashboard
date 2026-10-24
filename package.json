@@ -2,6 +2,7 @@
   "name": "@b4fun/smol-dashboard",
   "version": "0.1.0",
   "description": "Minimal dashboard component library and shadcn registry.",
+  "license": "MIT",
   "type": "module",
   "sideEffects": [
     "**/*.css"
