@@ -27,6 +27,10 @@ for (const theme of ["light", "dark"]) {
     await page.keyboard.press("ArrowDown");
     const menu = page.getByRole("menu", { name: "Choose report template" });
     await expect(menu).toBeVisible();
+    const inputBounds = await input.evaluate((element) => element.getBoundingClientRect().toJSON());
+    const menuBounds = await menu.evaluate((element) => element.getBoundingClientRect().toJSON());
+    expect(Math.abs(menuBounds.width - inputBounds.width)).toBeLessThanOrEqual(1);
+    expect(Math.abs(menuBounds.x - inputBounds.x)).toBeLessThanOrEqual(1);
     const disabled = menu.getByRole("menuitemradio", { name: /^Audit pack/ });
     await expect(disabled).toHaveAttribute("aria-disabled", "true");
     await disabled.evaluate((element: HTMLElement) => element.click());

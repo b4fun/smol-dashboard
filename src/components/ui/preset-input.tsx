@@ -35,7 +35,7 @@ export const PresetInput = React.forwardRef<HTMLInputElement, PresetInputProps>(
             <Button variant="ghost" size="icon-sm" className="absolute top-1 right-1" aria-label={presetLabel}
               icon={<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m4 6 4 4 4-4" /></svg>} />
           </DropdownMenuTrigger>
-          <DropdownMenuContent container={container} onCloseAutoFocus={(event) => {
+          <DropdownMenuContent container={container} alignOffset={-4} style={{ width: input.current?.getBoundingClientRect().width }} onCloseAutoFocus={(event) => {
             if (selected.current) { event.preventDefault(); input.current?.focus(); selected.current = false; }
           }}>
             <DropdownMenuRadioGroup value={value} onValueChange={(next) => { selected.current = true; onValueChange(next); }}>
