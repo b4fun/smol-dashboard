@@ -13,7 +13,7 @@ npx shadcn@latest add b4fun/smol-dashboard/button
 
 Available items:
 
-`alert`, `alert-dialog`, `app-shell`, `app-shell-header`, `button`,
+`alert`, `alert-dialog`, `app-shell`, `app-shell-header`, `button`, `chat`,
 `collapsible-list`, `context-menu`, `dialog`, `dropdown-menu`, `empty-state`,
 `field`, `filter-pills`, `input`, `operation-result`, `preset-input`,
 `select`, `skeleton`, `spinner`, and `status-indicator`.

@@ -270,6 +270,19 @@
           "type": "registry:component"
         }
       ]
+    },
+    {
+      "name": "chat",
+      "type": "registry:component",
+      "title": "Chat",
+      "description": "Responsive chat conversation with an accessible message composer and send callback.",
+      "dependencies": ["class-variance-authority"],
+      "registryDependencies": ["utils"],
+      "files": [
+        { "path": "src/components/chat.tsx", "type": "registry:component" },
+        { "path": "src/components/ui/button.tsx", "type": "registry:ui" },
+        { "path": "src/components/ui/spinner.tsx", "type": "registry:ui" }
+      ]
     }
   ]
 }

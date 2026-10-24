@@ -95,6 +95,73 @@ Add future examples as `stories/<component>.stories.tsx`; they are discovered
 automatically. Storybook uses source components and the same Tailwind theme as
 the library.
 
+The **Components / Chat** stories include **Multiline Draft**, **Long Draft**,
+and **Long Conversation** for inspecting wrapping and scrolling. Drafts grow
+up to 144px before scrolling inside the composer; long conversations scroll
+independently while the composer stays visible. Use `defaultDraft` to prefill
+an editable draft.
+
+Set Chat's `title` to change its heading and pass `headerActions` to place
+buttons, selectors, or other widgets on the right. The **Header Actions** story
+demonstrates a keyboard-accessible model dropdown using the existing
+`DropdownMenu` component. Its selection is local demo state, not a backend model
+configuration. When installing from the registry, also install `dropdown-menu`
+if you use this example.
+
+The composer uses a full-width text area above a bottom toolbar with an
+icon-only Send button. Pass `composerActions` to add controls on the left;
+the **Composer Actions** story demonstrates multiple buttons, toggle states,
+and a disabled voice-input button. Give every icon-only action an accessible name.
+The `footer` prop accepts custom React content below the composer. Omit it for
+the default keyboard hint and disclaimer, or pass `footer={null}` to remove it
+and its spacing. See **Custom Footer** and **Without Footer**.
+
+Messages accept optional `userName`, `model`, and `timestamp` strings. Format
+`timestamp` for the user's locale before passing it in. Metadata appears below
+the message on hover or keyboard focus, stays visible on non-hover devices,
+and remains available to screen readers. Space is reserved to avoid layout
+shifts when it appears. See **Message Info** for messages with and without metadata.
+
+For tool activity, add a message with `role: "tool"`, `toolName`, `content`,
+and `status: "running" | "completed" | "error"`. Update the same message ID as
+work progresses; remove it from `messages` if the activity should be temporary.
+Consecutive tool messages automatically form a collapsed, keyboard-expandable
+group. The summary shows counts and states even while collapsed; errors remain
+available in the details. Assistant or user messages separate groups. Running
+tools replace the generic thinking indicator with a polite progress status.
+Continue setting `isLoading` during an assistant turn to disable submission.
+The **Tool Use** story simulates completion without losing the group's expanded
+state; **Separate Tool Groups** demonstrates grouping boundaries.
+The conversation reserves a stable scrollbar gutter, so expanding tool details
+does not shift message widths or the surrounding controls.
+
+For streamed replies, update the last assistant message's `content` as chunks
+arrive and set `isStreaming`. Provide `onStop` to turn Send into a **Stop
+response** button; your app owns cancellation (for example, aborting its
+request). Without `onStop`, sending is disabled while streaming. The
+conversation follows new content while the user is at the bottom. If they
+scroll up, it stays put and shows a floating down-arrow button (“Jump to latest”); sending a message resumes
+following. Set `responseError` to announce a failed reply, with `onRetry` for a
+**Retry** button. Set `error` on a message and pass `onRetryMessage` to offer
+**Retry** below it. Errors use red text with an icon, and each Retry button has a
+distinct accessible name (“Retry response” or “Retry message”). Set
+`isRetrying` (response) or `retrying: true` (message) while a retry is in
+flight: the link shows a spinner and “Retrying…”, keeps keyboard focus,
+ignores repeat activation, and announces the change. The spinner stops when
+reduced motion is preferred. The draft is never cleared by these states.
+**Streaming** and **Error And Retry** simulate these flows in Storybook.
+
+When a conversation overflows and has at least two user prompts, a message
+rail appears at the right edge (on screens 640px and wider). Each dash is one
+prompt; the current one is longer and brighter. Click a dash, or focus the rail
+with Tab and use Arrow Up/Down, Home, and End, to scroll to a prompt. Dashes
+sit in compact 8px rows; hovering or focusing one magnifies it to a 24px target
+and slightly enlarges its neighbors. Touch devices keep 24px rows. Hover or
+focus also shows a preview of the prompt and its `timestamp`, which Escape
+dismisses. The rail scrolls itself when there are more prompts than fit. See
+**Message Navigation**.
+Assistant content is rendered as plain text; Markdown rendering is not yet supported.
+
 ## App shell
 
 `AppShell` provides a responsive dashboard layout inspired by
