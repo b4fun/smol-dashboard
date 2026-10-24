@@ -15,6 +15,7 @@ Check the project and generate its build outputs:
 npm run typecheck
 npm run build
 npm run build-storybook
+npm run test:registry
 ```
 
 `npm run build` creates the ESM library and TypeScript declarations in `dist/`,
@@ -34,6 +35,10 @@ npm run test:a11y
 
 The test runner starts Storybook automatically, or reuses an existing server on
 port 6006 when not running in CI.
+
+`npm run test:registry` builds the registry, serves its generated items locally,
+and verifies that each advertised item is available with populated file
+content.
 
 ## Use as a library
 
