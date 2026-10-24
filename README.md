@@ -4,13 +4,37 @@ Minimal React component library and shadcn/ui registry. Requires React 18 or 19 
 
 ## Development
 
+Install Node.js 24 LTS (includes npm), then restore the locked dependencies:
+
 ```sh
-npm install
+npm ci
+```
+
+If Node.js was just installed, reopen your terminal so `node` and `npm` are on
+`PATH`.
+
+Check the project and generate its build outputs:
+
+```sh
 npm run typecheck
 npm run build
+npm run build-storybook
 ```
 
 `npm run build` creates the ESM library and TypeScript declarations in `dist/`, then generates installable registry items in `public/r/`. `npm run dev` watches the library TypeScript sources.
+
+For interactive component development, run `npm run storybook` and open
+http://localhost:6006. No backend service or environment variables are required.
+
+Install the test browser once, then run the accessibility and interaction suite:
+
+```sh
+npx playwright install chromium
+npm run test:a11y
+```
+
+The test runner starts Storybook automatically, or reuses an existing server on
+port 6006 when not running in CI.
 
 ## Use as a library
 
@@ -28,7 +52,7 @@ In your application's main CSS file (adjust the source path relative to that fil
 @source "../node_modules/@b4fun/smol-dashboard/dist";
 ```
 
-The source directive lets Tailwind discover the package's utility classes. The stylesheet provides neutral light and dark theme tokens; add `.dark` to an ancestor to use the dark theme. Applications with an existing shadcn theme can keep their own tokens and omit the package stylesheet.
+The source directive lets Tailwind discover the package's utility classes. The stylesheet provides neutral light and dark theme tokens and a cross-platform system font stack based on [GitHub Primer](https://github.com/primer/css/blob/main/src/support/variables/typography.scss); it uses the native UI font where available and requires no downloaded font. Add `.dark` to an ancestor to use the dark theme. Override `--fontStack-sansSerif` to choose a different font. Applications with an existing shadcn theme can keep their own tokens and omit the package stylesheet.
 
 ```tsx
 import { Button } from "@b4fun/smol-dashboard";
