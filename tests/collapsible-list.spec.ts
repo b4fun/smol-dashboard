@@ -44,12 +44,17 @@ for (const theme of ["light", "dark"]) {
       await page.goto(`${story}--narrow&viewMode=story&globals=theme:${theme}`);
       const item = page.locator('[data-slot="collapsible-list-item"]');
       const trailing = page.locator('[data-slot="collapsible-list-trailing"]');
+      const leading = page.locator('[data-slot="collapsible-list-leading"]');
       await expect(item).toBeVisible();
       await expect(trailing).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       expect(await item.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
-      const titleBounds = await item.getByText("sandbox-customer-experience-launch-readiness-worker", { exact: true }).boundingBox();
+      const title = item.locator(".text-sm.font-medium");
+      const titleBounds = await title.boundingBox();
+      const leadingBounds = await leading.boundingBox();
       const trailingBounds = await trailing.boundingBox();
+      expect(leadingBounds!.y - titleBounds!.y).toBeGreaterThanOrEqual(0);
+      expect(leadingBounds!.y - titleBounds!.y).toBeLessThan(4);
       expect(trailingBounds!.y).toBeGreaterThan(titleBounds!.y + titleBounds!.height);
       expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
       await page.screenshot({ path: `test-results/collapsible-list-narrow-${width}-${theme}.png`, fullPage: true });
