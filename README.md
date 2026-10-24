@@ -3,6 +3,8 @@
 A shadcn/ui registry of dashboard components. Add individual items to an
 application initialized with [shadcn/ui](https://ui.shadcn.com/).
 
+Explore the components in [Storybook](https://b4fun.github.io/smol-dashboard/).
+
 ## Install an item
 
 For example, to add the Button:
