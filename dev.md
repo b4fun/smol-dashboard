@@ -81,6 +81,8 @@ for form submission.
 
 ## Component explorer
 
+Browse the hosted [Storybook](https://b4fun.github.io/smol-dashboard/).
+
 Run `npm run storybook` and open http://localhost:6006 to explore the
 components. The Button stories include an interactive playground, individual
 variants, a disabled state, an accessible icon button, and a grid of all
@@ -90,6 +92,13 @@ documentation and usage examples.
 
 Run `npm run build-storybook` to produce a deployable static explorer in
 `storybook-static/`.
+
+The `Deploy Storybook to GitHub Pages` workflow publishes this directory on
+pushes to `main` and can also be run manually from the Actions tab. For initial
+setup, a repository administrator must select **GitHub Actions** under
+**Settings > Pages > Build and deployment > Source**. The site becomes available
+after the first successful deployment. This publishes the component explorer,
+not the registry's `public/r/` output.
 
 Add future examples as `stories/<component>.stories.tsx`; they are discovered
 automatically. Storybook uses source components and the same Tailwind theme as
