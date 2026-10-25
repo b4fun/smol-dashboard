@@ -58,7 +58,7 @@ export const CollapsibleList = React.forwardRef<HTMLDivElement, CollapsibleListP
                   )}>
                   {item.leading && (
                     <span data-slot="collapsible-list-leading" aria-hidden="true"
-                      className={cn("flex w-4 shrink-0 items-center justify-center", item.href !== undefined ? "h-6" : "h-5")}>{item.leading}</span>
+                      className="flex size-4 shrink-0 items-center justify-center self-center">{item.leading}</span>
                   )}
                   <div className="flex min-w-0 flex-1 flex-col gap-2 @lg:flex-row @lg:items-end @lg:gap-6">
                     <div className="min-w-0 flex-1">

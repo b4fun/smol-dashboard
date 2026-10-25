@@ -99,15 +99,14 @@ test("chevrons respect reduced motion", async ({ page }) => {
 });
 
 for (const variant of ["default", "linked-items"]) {
-  test(`leading indicator is centered on the title (${variant})`, async ({ page }) => {
+  test(`leading indicator is centered on the row (${variant})`, async ({ page }) => {
     await page.goto(`${story}--${variant}&viewMode=story`);
     const offset = await page.locator('[data-slot="collapsible-list-item"]').first().evaluate((item) => {
       const center = (element: Element) => {
         const bounds = element.getBoundingClientRect();
         return bounds.y + bounds.height / 2;
       };
-      const title = item.querySelector("a") ?? item.querySelector(".font-medium")!;
-      return Math.abs(center(item.querySelector('[data-slot="status-indicator"]')!) - center(title));
+      return Math.abs(center(item.querySelector('[data-slot="status-indicator"]')!) - center(item));
     });
     expect(offset).toBeLessThan(0.5);
   });
