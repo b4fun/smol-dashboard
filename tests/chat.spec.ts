@@ -490,3 +490,24 @@ test("loading chat exposes its status and disables sending", async ({ page }) =>
   await composer.fill("A question");
   await expect(page.getByRole("button", { name: "Send" })).toBeDisabled();
 });
+
+test("disabled chat blocks typing and sending", async ({ page }) => {
+  await page.goto(`${story}--disabled&viewMode=story`);
+  await expect(page.getByRole("textbox", { name: "Message" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Send" })).toBeDisabled();
+  expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
+});
+
+test("rejected send keeps the draft", async ({ page }) => {
+  await page.goto(`${story}--rejected-send&viewMode=story`);
+  const composer = page.getByRole("textbox", { name: "Message" });
+  const longDraft = "This message is much longer than forty characters.";
+  await composer.fill(longDraft);
+  await page.keyboard.press("Enter");
+  await expect(composer).toHaveValue(longDraft);
+  await expect(page.getByRole("status").filter({ hasText: "Your draft was kept." })).toBeVisible();
+  await composer.fill("Short message");
+  await page.keyboard.press("Enter");
+  await expect(composer).toHaveValue("");
+  await expect(page.getByRole("log")).toContainText("Short message");
+});

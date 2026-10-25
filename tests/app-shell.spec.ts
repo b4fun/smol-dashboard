@@ -71,6 +71,38 @@ test("sidebar transition respects reduced motion", async ({ page }) => {
   await expect(brand).toHaveCSS("visibility", "hidden");
 });
 
+test("collapsed sidebar shows the brand icon and reveals the toggle on hover", async ({ page }) => {
+  await page.goto("/iframe.html?id=layout-app-shell--with-brand-icon&viewMode=story");
+  const toggle = page.getByRole("button", { name: "Expand sidebar" });
+  const icon = toggle.locator('[data-slot="app-shell-brand-icon"]');
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(icon).toBeVisible();
+  await toggle.hover();
+  await expect(icon).toBeHidden();
+  await page.mouse.move(600, 400);
+  await expect(icon).toBeVisible();
+  await toggle.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("button", { name: "Collapse sidebar" })).toHaveAttribute("aria-expanded", "true");
+  await expect(icon).toHaveCount(0);
+  expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
+});
+
+test("sidebar items keep their position while collapsing", async ({ page }) => {
+  await page.goto(story);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  const positions = () => nav.evaluate((element) => [...element.querySelectorAll("h2, a")].map((item) => {
+    const box = item.getBoundingClientRect();
+    const icon = item.querySelector("[aria-hidden]")?.getBoundingClientRect();
+    return { y: box.y, height: box.height, iconX: icon?.x };
+  }));
+  const expanded = await positions();
+  await page.getByRole("button", { name: "Collapse sidebar" }).click();
+  await expect(page.locator('[data-slot="app-shell-sidebar"]')).toHaveCSS("width", "56px");
+  expect(await positions()).toEqual(expanded);
+});
+
 test("shell fills available height and content scrolls independently", async ({ page }) => {
   await page.goto(story);
   const main = page.getByRole("main");
