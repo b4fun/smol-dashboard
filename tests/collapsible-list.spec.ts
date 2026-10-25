@@ -98,16 +98,17 @@ test("chevrons respect reduced motion", async ({ page }) => {
   await expect(page.locator(triggers).nth(0).locator("svg")).toHaveCSS("transition-property", "none");
 });
 
-for (const variant of ["default", "linked-items"]) {
-  test(`leading indicator is centered on the row (${variant})`, async ({ page }) => {
+for (const [variant, target] of [["default", "title"], ["linked-items", "title"], ["centered-leading", "row"]]) {
+  test(`leading indicator is centered on the ${target} (${variant})`, async ({ page }) => {
     await page.goto(`${story}--${variant}&viewMode=story`);
-    const offset = await page.locator('[data-slot="collapsible-list-item"]').first().evaluate((item) => {
+    const offset = await page.locator('[data-slot="collapsible-list-item"]').first().evaluate((item, target) => {
       const center = (element: Element) => {
         const bounds = element.getBoundingClientRect();
         return bounds.y + bounds.height / 2;
       };
-      return Math.abs(center(item.querySelector('[data-slot="status-indicator"]')!) - center(item));
-    });
+      const reference = target === "row" ? item : item.querySelector("a") ?? item.querySelector(".font-medium")!;
+      return Math.abs(center(item.querySelector('[data-slot="status-indicator"]')!) - center(reference));
+    }, target);
     expect(offset).toBeLessThan(0.5);
   });
 }

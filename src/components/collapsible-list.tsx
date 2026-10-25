@@ -26,12 +26,14 @@ export interface CollapsibleListGroup {
 export interface CollapsibleListProps extends React.ComponentPropsWithoutRef<"div"> {
   groups: CollapsibleListGroup[];
   emptyMessage?: React.ReactNode;
+  /** Align leading content with the title (`start`) or with the whole row (`center`). */
+  leadingAlign?: "start" | "center";
 }
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground";
 
 export const CollapsibleList = React.forwardRef<HTMLDivElement, CollapsibleListProps>(
-  ({ groups, emptyMessage = "No items.", className, ...props }, ref) => (
+  ({ groups, emptyMessage = "No items.", leadingAlign = "start", className, ...props }, ref) => (
     <div ref={ref} data-slot="collapsible-list" className={cn("@container space-y-6 bg-background text-foreground", className)} {...props}>
       {groups.map((group) => (
         <details key={group.id} open={group.defaultOpen ?? true} data-slot="collapsible-list-group" className="group">
@@ -58,7 +60,10 @@ export const CollapsibleList = React.forwardRef<HTMLDivElement, CollapsibleListP
                   )}>
                   {item.leading && (
                     <span data-slot="collapsible-list-leading" aria-hidden="true"
-                      className="flex size-4 shrink-0 items-center justify-center self-center">{item.leading}</span>
+                      className={cn(
+                        "flex w-4 shrink-0 items-center justify-center",
+                        leadingAlign === "center" ? "h-4 self-center" : item.href !== undefined ? "h-6" : "h-5",
+                      )}>{item.leading}</span>
                   )}
                   <div className="flex min-w-0 flex-1 flex-col gap-2 @lg:flex-row @lg:items-end @lg:gap-6">
                     <div className="min-w-0 flex-1">

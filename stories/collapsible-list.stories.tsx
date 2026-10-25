@@ -58,6 +58,9 @@ export const Collapsed: Story = {
 export const LinkedItems: Story = {
   args: { groups: groups.map((group) => ({ ...group, items: group.items.map((item) => ({ ...item, href: `#${item.id}` })) })) },
 };
+export const CenteredLeading: Story = {
+  args: { leadingAlign: "center" },
+};
 export const MultipleItems: Story = {
   args: { groups: [{ ...groups[0], items: [groups[0].items[0], {
     id: "sandbox-worker", title: "sandbox-worker", description: "opensandbox / sandbox-worker-0",
