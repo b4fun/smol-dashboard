@@ -112,3 +112,20 @@ for (const variant of ["default", "linked-items"]) {
     expect(offset).toBeLessThan(0.5);
   });
 }
+
+test("linked rows are clickable without underlining the title", async ({ page }) => {
+  await page.goto(`${story}--linked-items&viewMode=story`);
+  const link = page.getByRole("link", { name: "sandbox-running", exact: true });
+  const row = page.locator('[data-slot="collapsible-list-item"]').filter({ has: link });
+  await link.hover();
+  await expect(link).toHaveCSS("text-decoration-line", "none");
+  await expect(row).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  const bounds = (await row.boundingBox())!;
+  await row.click({ position: { x: bounds.width - 16, y: bounds.height - 8 } });
+  await expect(page).toHaveURL(/#sandbox-running$/);
+  await page.locator(triggers).nth(0).focus();
+  await page.keyboard.press("Tab");
+  await expect(link).toBeFocused();
+  await expect(row).toHaveCSS("outline-style", "solid");
+  await expect(row).toHaveCSS("outline-width", "2px");
+});

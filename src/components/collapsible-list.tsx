@@ -49,9 +49,13 @@ export const CollapsibleList = React.forwardRef<HTMLDivElement, CollapsibleListP
             </span>
           </summary>
           {group.items.length > 0 ? (
-            <ul aria-label={group.label}>
+            <ul aria-label={group.label} className="mt-1 space-y-1">
               {group.items.map((item) => (
-                <li key={item.id} data-slot="collapsible-list-item" className="flex items-start gap-3 px-6 py-4 [overflow-wrap:anywhere]">
+                <li key={item.id} data-slot="collapsible-list-item"
+                  className={cn(
+                    "flex items-start gap-3 px-6 py-4 [overflow-wrap:anywhere]",
+                    item.href !== undefined && "relative rounded-lg hover:bg-foreground/5 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:-outline-offset-2 has-[a:focus-visible]:outline-foreground",
+                  )}>
                   {item.leading && (
                     <span data-slot="collapsible-list-leading" aria-hidden="true"
                       className={cn("flex w-4 shrink-0 items-center justify-center", item.href !== undefined ? "h-6" : "h-5")}>{item.leading}</span>
@@ -60,7 +64,7 @@ export const CollapsibleList = React.forwardRef<HTMLDivElement, CollapsibleListP
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-medium">
                         {item.href !== undefined ? (
-                          <a href={item.href} className={cn("inline-flex min-h-6 items-center rounded-sm underline-offset-4 hover:underline", focus)}>{item.title}</a>
+                          <a href={item.href} className="inline-flex min-h-6 items-center rounded-sm after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none">{item.title}</a>
                         ) : item.title}
                       </div>
                       {item.description && <div className="text-xs text-foreground/70">{item.description}</div>}
