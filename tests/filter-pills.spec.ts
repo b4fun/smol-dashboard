@@ -60,3 +60,17 @@ test("disabled filters cannot change the controlled value", async ({ page }) => 
   await expect(group.getByRole("button", { name: "All, 6 items", exact: true })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("status")).toHaveText("Showing 6 reports.");
 });
+
+test("option icons stay visible and replace the check mark", async ({ page }) => {
+  await page.goto(`${story}--with-icons&viewMode=story`);
+  const group = page.getByRole("group", { name: "Filter reports by status" });
+  const icons = group.locator("button svg");
+  await expect(icons).toHaveCount(5);
+  const draft = group.getByRole("button", { name: /^Draft/ });
+  const before = await draft.locator("svg path").getAttribute("d");
+  await draft.click();
+  await expect(draft).toHaveAttribute("aria-pressed", "true");
+  await expect(icons).toHaveCount(5);
+  expect(await draft.locator("svg path").getAttribute("d")).toBe(before);
+  expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
+});

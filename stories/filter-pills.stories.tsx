@@ -31,3 +31,16 @@ export const Playground: Story = {};
 export const WithoutCounts: Story = { args: { options: options.map(({ count, ...option }) => option) } };
 export const Disabled: Story = { args: { options: options.map((option) => ({ ...option, disabled: true })) } };
 export const Dark: Story = { globals: { theme: "dark" } };
+
+const statusIcon = (path: string) => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4"><path d={path} /></svg>;
+export const WithIcons: Story = {
+  args: {
+    options: [
+      { ...options[0], icon: statusIcon("M2 4h12M2 8h12M2 12h12") },
+      { ...options[1], icon: statusIcon("M3 13l1-3 7-7 2 2-7 7-3 1z") },
+      { ...options[2], icon: statusIcon("M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zm0 3v3l2 2") },
+      { ...options[3], icon: statusIcon("m3 8 3 3 7-7") },
+      { ...options[4], icon: statusIcon("M2 4h12v2H2zM3 6v7h10V6M6 9h4") },
+    ],
+  },
+};

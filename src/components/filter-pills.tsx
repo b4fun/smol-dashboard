@@ -8,6 +8,8 @@ export interface FilterPillOption {
   value: string;
   label: string;
   count?: number;
+  /** Shown in every state. Without it, a check mark marks the selected option. */
+  icon?: React.ReactNode;
   disabled?: boolean;
 }
 
@@ -28,7 +30,7 @@ export const FilterPills = React.forwardRef<HTMLDivElement, FilterPillsProps>(
             aria-pressed={selected} disabled={option.disabled}
             aria-label={option.count === undefined ? option.label : `${option.label}, ${option.count} ${option.count === 1 ? "item" : "items"}`}
             onClick={() => onValueChange(option.value)}
-            icon={<span className="size-4">{selected && <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="m3 8 3 3 7-7" /></svg>}</span>}>
+            icon={<span aria-hidden="true" className="flex size-4 items-center justify-center">{option.icon ?? (selected && <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="size-4"><path d="m3 8 3 3 7-7" /></svg>)}</span>}>
             {option.label}{option.count !== undefined && (
               <span className={cn(
                 "min-w-5 rounded-full px-1.5 text-center text-[10px] leading-5 tabular-nums",
