@@ -58,7 +58,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
     );
 
     return (
-      <div ref={ref} className={cn("relative flex h-dvh flex-col overflow-hidden bg-accent text-foreground md:flex-row md:p-2", className)} {...props}>
+      <div ref={ref} className={cn("relative flex h-dvh flex-col overflow-hidden bg-accent text-foreground md:flex-row md:gap-2 md:p-2", className)} {...props}>
         <a href={`#${mainId}`} className={cn("sr-only z-10 rounded-md bg-background p-3 focus:not-sr-only focus:absolute focus:top-3 focus:left-3", focus)}>
           Skip to content
         </a>
@@ -100,6 +100,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
                     <li key={item.href}>
                       <a
                         href={item.href}
+                        onClick={() => setMobileOpen(false)}
                         aria-current={item.active ? "page" : undefined}
                         title={item.label}
                         className={cn(

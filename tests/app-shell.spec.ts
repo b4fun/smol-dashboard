@@ -46,6 +46,10 @@ test("mobile navigation disclosure and skip link", async ({ page }) => {
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
   await page.keyboard.press("Enter");
   await expect(nav).toBeHidden();
+  await toggle.click();
+  await nav.getByRole("link", { name: "Projects" }).click();
+  await expect(nav).toBeHidden();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
   const skip = page.getByRole("link", { name: "Skip to content" });
   await skip.focus();
   await page.keyboard.press("Enter");
@@ -86,6 +90,13 @@ test("collapsed sidebar shows the brand icon and reveals the toggle on hover", a
   await expect(page.getByRole("button", { name: "Collapse sidebar" })).toHaveAttribute("aria-expanded", "true");
   await expect(icon).toHaveCount(0);
   expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
+});
+
+test("active item has balanced sidebar gutters", async ({ page }) => {
+  await page.goto(story);
+  const item = await page.getByRole("link", { name: "Overview" }).boundingBox();
+  const panel = await page.locator('[data-slot="app-shell-content"]').locator("..").boundingBox();
+  expect(Math.abs(item!.x - (panel!.x - item!.x - item!.width))).toBeLessThan(0.5);
 });
 
 test("sidebar items keep their position while collapsing", async ({ page }) => {
