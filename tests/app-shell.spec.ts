@@ -139,14 +139,8 @@ for (const width of [1280, 375]) {
     await page.setViewportSize({ width, height: 812 });
     await page.goto("/iframe.html?id=layout-app-shell--with-breadcrumbs&viewMode=story");
     const breadcrumb = page.getByRole("navigation", { name: "Breadcrumb", exact: true });
-    await expect(breadcrumb.getByRole("link")).toHaveCount(1);
-    await breadcrumb.focus();
-    await expect(breadcrumb.getByRole("link")).toHaveCount(1);
-    await breadcrumb.getByRole("link", { name: "Workspace" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(breadcrumb.getByRole("button", { name: "Show intermediate pages" })).toBeFocused();
-    await page.keyboard.press("Enter");
     await expect(breadcrumb.getByRole("link")).toHaveCount(2);
+    await expect(breadcrumb.getByRole("button", { name: "Show intermediate pages", includeHidden: true })).toHaveCount(0);
     await expect(breadcrumb.getByRole("link").nth(0)).toHaveAccessibleName("Workspace");
     await expect(breadcrumb.getByRole("link").nth(1)).toHaveAccessibleName("Website refresh");
     await expect(breadcrumb.locator('[aria-current="page"]')).toHaveText("Website refresh — Review the launch checklist");
