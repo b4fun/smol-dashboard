@@ -104,8 +104,8 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
                         aria-current={item.active ? "page" : undefined}
                         title={item.label}
                         className={cn(
-                          "flex min-h-10 items-center gap-3 rounded-md px-4 py-2 text-sm hover:bg-background",
-                          focus,
+                          // The navigation clips horizontal overflow, so draw the focus ring inside the item.
+                          "flex min-h-10 items-center gap-3 rounded-md px-4 py-2 text-sm hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
                           item.active && "bg-background font-semibold shadow-sm",
                         )}
                       >

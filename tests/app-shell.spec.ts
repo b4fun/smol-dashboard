@@ -191,3 +191,13 @@ for (const theme of ["light", "dark"]) {
     await expect(expand).toHaveAttribute("aria-expanded", "false");
   });
 }
+
+test("navigation focus ring is not clipped by the sidebar", async ({ page }) => {
+  await page.goto(story);
+  const link = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link").first();
+  await link.focus();
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Shift+Tab");
+  await expect(link).toBeFocused();
+  expect(await link.evaluate((element) => getComputedStyle(element).boxShadow)).toContain("inset");
+});
