@@ -33,12 +33,13 @@ export const AppShellHeader = React.forwardRef<HTMLElement, AppShellHeaderProps>
     React.useLayoutEffect(() => {
       if (expanded && document.activeElement === disclosure.current) firstMiddleLink.current?.focus();
     }, [expanded]);
-    const collapsible = breadcrumbs.length > 1;
+    // Collapse only when it hides two or more pages; a single hidden page costs as much space as the ellipsis.
+    const collapsible = breadcrumbs.length > 2;
     const focus = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset";
 
     const renderAncestor = (item: AppShellBreadcrumb, index: number) => (
       <li key={`${item.href}-${index}`} id={index > 0 ? `${middleId}-${index}` : undefined}
-        hidden={index > 0 && !expanded} className={cn("shrink-0 items-center gap-2", index > 0 && !expanded ? "hidden" : "flex")}>
+        hidden={collapsible && index > 0 && !expanded} className={cn("shrink-0 items-center gap-2", collapsible && index > 0 && !expanded ? "hidden" : "flex")}>
         <a ref={index === 0 ? firstLink : index === 1 ? firstMiddleLink : undefined} href={item.href} className={cn("group inline-flex min-h-9 items-center gap-2 rounded-md px-1", focus)}>
           {item.icon && <span aria-hidden="true" className="shrink-0">{item.icon}</span>}
           <span className="group-hover:underline">{item.label}</span>

@@ -229,8 +229,11 @@ export interface ChatProps extends Omit<React.ComponentPropsWithoutRef<"section"
   composerActions?: React.ReactNode;
   footer?: React.ReactNode;
   messages: ChatMessage[];
-  onSend: (message: string) => void;
+  /** Return `false` to keep the draft, for example when sending fails validation. */
+  onSend: (message: string) => boolean | void;
   isLoading?: boolean;
+  /** Disables the composer, for example while the conversation is read-only. */
+  disabled?: boolean;
   isStreaming?: boolean;
   onStop?: () => void;
   responseError?: string;
@@ -252,6 +255,7 @@ export const Chat = React.forwardRef<HTMLElement, ChatProps>(
     messages,
     onSend,
     isLoading = false,
+    disabled = false,
     isStreaming = false,
     onStop,
     responseError,
@@ -386,11 +390,10 @@ export const Chat = React.forwardRef<HTMLElement, ChatProps>(
     const sendMessage = (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const message = draft.trim();
-      if (!message || busy) return;
+      if (!message || busy || disabled) return;
       followRef.current = true;
       setShowJump(false);
-      onSend(message);
-      setDraft("");
+      if (onSend(message) !== false) setDraft("");
     };
 
     return (
@@ -532,6 +535,7 @@ export const Chat = React.forwardRef<HTMLElement, ChatProps>(
                 data-slot="chat-composer"
                 rows={1}
                 value={draft}
+                disabled={disabled}
                 onChange={(event) => setDraft(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
@@ -551,7 +555,7 @@ export const Chat = React.forwardRef<HTMLElement, ChatProps>(
                 size="icon-sm"
                 aria-label={busy && onStop ? "Stop response" : "Send"}
                 onClick={busy && onStop ? onStop : undefined}
-                disabled={busy ? !onStop : !draft.trim()}
+                disabled={disabled || (busy ? !onStop : !draft.trim())}
                 className="shrink-0 rounded-full"
                 icon={
                   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">

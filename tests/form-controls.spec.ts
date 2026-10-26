@@ -119,6 +119,20 @@ test("native select supports keyboard selection and disabled options", async ({ 
   await expect(select.locator('option[value="html"]')).toBeDisabled();
 });
 
+test("native select hides the focus outline after a click but keeps it for keyboard focus", async ({ page }) => {
+  await page.goto("/iframe.html?id=forms-select--playground&viewMode=story");
+  const select = page.getByRole("combobox", { name: "File format" });
+  await select.click();
+  await expect(select).toHaveCSS("outline-style", "none");
+  await page.keyboard.press("ArrowDown");
+  await expect(select).toHaveCSS("outline-style", "solid");
+  await page.reload();
+  await expect(select).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(select).toBeFocused();
+  await expect(select).toHaveCSS("outline-style", "solid");
+});
+
 test("busy icon-only button retains its explicit accessible name", async ({ page }) => {
   await page.goto("/iframe.html?id=components-button--busy-icon&viewMode=story");
   const button = page.getByRole("button", { name: "Refreshing reports" });

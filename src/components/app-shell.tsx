@@ -20,22 +20,36 @@ export interface AppShellNavGroup {
 
 export interface AppShellProps extends React.ComponentPropsWithoutRef<"div"> {
   brand: React.ReactNode;
+  /** Compact mark shown in the collapsed desktop sidebar. Hovering it reveals the expand icon. */
+  brandIcon?: React.ReactNode;
   brandHref?: string;
   title: string;
   breadcrumbs?: AppShellBreadcrumb[];
   navigation: AppShellNavGroup[];
   sidebarFooter?: React.ReactNode;
   headerActions?: React.ReactNode;
+  /** Controlled desktop sidebar state. */
+  sidebarOpen?: boolean;
+  defaultSidebarOpen?: boolean;
+  onSidebarOpenChange?: (open: boolean) => void;
 }
 
 const focus = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
 export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
-  ({ brand, brandHref = "/", title, breadcrumbs, navigation, sidebarFooter, headerActions, children, className, ...props }, ref) => {
+  ({
+    brand, brandIcon, brandHref = "/", title, breadcrumbs, navigation, sidebarFooter, headerActions,
+    sidebarOpen, defaultSidebarOpen = true, onSidebarOpenChange, children, className, ...props
+  }, ref) => {
     const sidebarId = React.useId();
     const mainId = React.useId();
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [desktopOpen, setDesktopOpen] = React.useState(true);
+    const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultSidebarOpen);
+    const desktopOpen = sidebarOpen ?? uncontrolledOpen;
+    const setDesktopOpen = (open: boolean) => {
+      if (sidebarOpen === undefined) setUncontrolledOpen(open);
+      onSidebarOpenChange?.(open);
+    };
     const toggleIcon = (
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4">
         <rect x="3" y="4" width="18" height="16" rx="2" />
@@ -44,7 +58,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
     );
 
     return (
-      <div ref={ref} className={cn("relative flex h-dvh flex-col overflow-hidden bg-accent text-foreground md:flex-row md:p-2", className)} {...props}>
+      <div ref={ref} className={cn("relative flex h-dvh flex-col overflow-hidden bg-accent text-foreground md:flex-row md:gap-2 md:p-2", className)} {...props}>
         <a href={`#${mainId}`} className={cn("sr-only z-10 rounded-md bg-background p-3 focus:not-sr-only focus:absolute focus:top-3 focus:left-3", focus)}>
           Skip to content
         </a>
@@ -62,34 +76,43 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
               {brand}
             </a>
             <Button
-              variant="ghost" size="icon" className="ml-auto hidden shrink-0 md:inline-flex"
+              variant="ghost" size="icon" className="group/sidebar-toggle ml-auto hidden shrink-0 md:inline-flex"
               aria-label={desktopOpen ? "Collapse sidebar" : "Expand sidebar"}
               aria-expanded={desktopOpen} aria-controls={sidebarId}
-              onClick={() => setDesktopOpen((open) => !open)}
-            >{toggleIcon}</Button>
+              onClick={() => setDesktopOpen(!desktopOpen)}
+            >
+              {!desktopOpen && brandIcon ? (
+                <span className="grid place-items-center">
+                  <span data-slot="app-shell-brand-icon" className="col-start-1 row-start-1 group-hover/sidebar-toggle:invisible group-focus-visible/sidebar-toggle:invisible">{brandIcon}</span>
+                  <span className="invisible col-start-1 row-start-1 group-hover/sidebar-toggle:visible group-focus-visible/sidebar-toggle:visible">{toggleIcon}</span>
+                </span>
+              ) : toggleIcon}
+            </Button>
           </div>
-          <nav data-slot="app-shell-navigation" aria-label="Main navigation" className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto">
+          <nav data-slot="app-shell-navigation" aria-label="Main navigation" className="flex min-h-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto">
             {navigation.map((group, groupIndex) => (
               <div key={group.label}>
-                <h2 id={`${sidebarId}-${groupIndex}`} className={cn("mb-2 px-3 text-xs font-medium", !desktopOpen && "md:sr-only")}>{group.label}</h2>
+                <h2 id={`${sidebarId}-${groupIndex}`} className="mb-2 h-4 px-3 text-xs font-medium whitespace-nowrap">
+                  <span className={cn(!desktopOpen && "md:sr-only")}>{group.label}</span>
+                </h2>
                 <ul aria-labelledby={`${sidebarId}-${groupIndex}`} className="space-y-1">
                   {group.items.map((item) => (
                     <li key={item.href}>
                       <a
                         href={item.href}
+                        onClick={() => setMobileOpen(false)}
                         aria-current={item.active ? "page" : undefined}
                         title={item.label}
                         className={cn(
-                          "flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-background",
-                          focus,
-                          !desktopOpen && "md:justify-center md:px-0",
+                          // The navigation clips horizontal overflow, so draw the focus ring inside the item.
+                          "flex min-h-10 items-center gap-3 rounded-md px-4 py-2 text-sm hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
                           item.active && "bg-background font-semibold shadow-sm",
                         )}
                       >
                         <span aria-hidden="true" className="flex size-4 shrink-0 items-center justify-center">
                           {item.icon ?? <span className="text-xs font-semibold">{item.label.slice(0, 1)}</span>}
                         </span>
-                        <span className={cn(!desktopOpen && "md:sr-only")}>{item.label}</span>
+                        <span className={cn("shrink-0 whitespace-nowrap", !desktopOpen && "md:sr-only")}>{item.label}</span>
                       </a>
                     </li>
                   ))}
@@ -116,7 +139,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
               </>
             }
           />
-          <main data-slot="app-shell-content" id={mainId} tabIndex={0} className="min-h-0 flex-1 overflow-auto p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset md:p-6">{children}</main>
+          <main data-slot="app-shell-content" id={mainId} tabIndex={0} className="min-h-0 flex-1 overflow-auto px-2 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset md:px-3 md:py-6">{children}</main>
         </div>
       </div>
     );

@@ -97,3 +97,35 @@ test("chevrons respect reduced motion", async ({ page }) => {
   await page.goto(`${story}--default&viewMode=story`);
   await expect(page.locator(triggers).nth(0).locator("svg")).toHaveCSS("transition-property", "none");
 });
+
+for (const [variant, target] of [["default", "title"], ["linked-items", "title"], ["centered-leading", "row"]]) {
+  test(`leading indicator is centered on the ${target} (${variant})`, async ({ page }) => {
+    await page.goto(`${story}--${variant}&viewMode=story`);
+    const offset = await page.locator('[data-slot="collapsible-list-item"]').first().evaluate((item, target) => {
+      const center = (element: Element) => {
+        const bounds = element.getBoundingClientRect();
+        return bounds.y + bounds.height / 2;
+      };
+      const reference = target === "row" ? item : item.querySelector("a") ?? item.querySelector(".font-medium")!;
+      return Math.abs(center(item.querySelector('[data-slot="status-indicator"]')!) - center(reference));
+    }, target);
+    expect(offset).toBeLessThan(0.5);
+  });
+}
+
+test("linked rows are clickable without underlining the title", async ({ page }) => {
+  await page.goto(`${story}--linked-items&viewMode=story`);
+  const link = page.getByRole("link", { name: "sandbox-running", exact: true });
+  const row = page.locator('[data-slot="collapsible-list-item"]').filter({ has: link });
+  await link.hover();
+  await expect(link).toHaveCSS("text-decoration-line", "none");
+  await expect(row).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  const bounds = (await row.boundingBox())!;
+  await row.click({ position: { x: bounds.width - 16, y: bounds.height - 8 } });
+  await expect(page).toHaveURL(/#sandbox-running$/);
+  await page.locator(triggers).nth(0).focus();
+  await page.keyboard.press("Tab");
+  await expect(link).toBeFocused();
+  await expect(row).toHaveCSS("outline-style", "solid");
+  await expect(row).toHaveCSS("outline-width", "2px");
+});

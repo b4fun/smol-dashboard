@@ -46,6 +46,10 @@ test("mobile navigation disclosure and skip link", async ({ page }) => {
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
   await page.keyboard.press("Enter");
   await expect(nav).toBeHidden();
+  await toggle.click();
+  await nav.getByRole("link", { name: "Projects" }).click();
+  await expect(nav).toBeHidden();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
   const skip = page.getByRole("link", { name: "Skip to content" });
   await skip.focus();
   await page.keyboard.press("Enter");
@@ -69,6 +73,45 @@ test("sidebar transition respects reduced motion", async ({ page }) => {
   await expect(sidebar).toHaveCSS("width", "56px");
   await expect(brand).toHaveCSS("display", "flex");
   await expect(brand).toHaveCSS("visibility", "hidden");
+});
+
+test("collapsed sidebar shows the brand icon and reveals the toggle on hover", async ({ page }) => {
+  await page.goto("/iframe.html?id=layout-app-shell--with-brand-icon&viewMode=story");
+  const toggle = page.getByRole("button", { name: "Expand sidebar" });
+  const icon = toggle.locator('[data-slot="app-shell-brand-icon"]');
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(icon).toBeVisible();
+  await toggle.hover();
+  await expect(icon).toBeHidden();
+  await page.mouse.move(600, 400);
+  await expect(icon).toBeVisible();
+  await toggle.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("button", { name: "Collapse sidebar" })).toHaveAttribute("aria-expanded", "true");
+  await expect(icon).toHaveCount(0);
+  expect((await new AxeBuilder({ page }).include("#storybook-root").analyze()).violations).toEqual([]);
+});
+
+test("active item has balanced sidebar gutters", async ({ page }) => {
+  await page.goto(story);
+  const item = await page.getByRole("link", { name: "Overview" }).boundingBox();
+  const panel = await page.locator('[data-slot="app-shell-content"]').locator("..").boundingBox();
+  expect(Math.abs(item!.x - (panel!.x - item!.x - item!.width))).toBeLessThan(0.5);
+});
+
+test("sidebar items keep their position while collapsing", async ({ page }) => {
+  await page.goto(story);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  const positions = () => nav.evaluate((element) => [...element.querySelectorAll("h2, a")].map((item) => {
+    const box = item.getBoundingClientRect();
+    const icon = item.querySelector("[aria-hidden]")?.getBoundingClientRect();
+    return { y: box.y, height: box.height, iconX: icon?.x };
+  }));
+  const expanded = await positions();
+  await page.getByRole("button", { name: "Collapse sidebar" }).click();
+  await expect(page.locator('[data-slot="app-shell-sidebar"]')).toHaveCSS("width", "56px");
+  expect(await positions()).toEqual(expanded);
 });
 
 test("shell fills available height and content scrolls independently", async ({ page }) => {
@@ -96,14 +139,8 @@ for (const width of [1280, 375]) {
     await page.setViewportSize({ width, height: 812 });
     await page.goto("/iframe.html?id=layout-app-shell--with-breadcrumbs&viewMode=story");
     const breadcrumb = page.getByRole("navigation", { name: "Breadcrumb", exact: true });
-    await expect(breadcrumb.getByRole("link")).toHaveCount(1);
-    await breadcrumb.focus();
-    await expect(breadcrumb.getByRole("link")).toHaveCount(1);
-    await breadcrumb.getByRole("link", { name: "Workspace" }).focus();
-    await page.keyboard.press("Tab");
-    await expect(breadcrumb.getByRole("button", { name: "Show intermediate pages" })).toBeFocused();
-    await page.keyboard.press("Enter");
     await expect(breadcrumb.getByRole("link")).toHaveCount(2);
+    await expect(breadcrumb.getByRole("button", { name: "Show intermediate pages", includeHidden: true })).toHaveCount(0);
     await expect(breadcrumb.getByRole("link").nth(0)).toHaveAccessibleName("Workspace");
     await expect(breadcrumb.getByRole("link").nth(1)).toHaveAccessibleName("Website refresh");
     await expect(breadcrumb.locator('[aria-current="page"]')).toHaveText("Website refresh — Review the launch checklist");
@@ -154,3 +191,13 @@ for (const theme of ["light", "dark"]) {
     await expect(expand).toHaveAttribute("aria-expanded", "false");
   });
 }
+
+test("navigation focus ring is not clipped by the sidebar", async ({ page }) => {
+  await page.goto(story);
+  const link = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link").first();
+  await link.focus();
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Shift+Tab");
+  await expect(link).toBeFocused();
+  expect(await link.evaluate((element) => getComputedStyle(element).boxShadow)).toContain("inset");
+});

@@ -26,12 +26,14 @@ export interface CollapsibleListGroup {
 export interface CollapsibleListProps extends React.ComponentPropsWithoutRef<"div"> {
   groups: CollapsibleListGroup[];
   emptyMessage?: React.ReactNode;
+  /** Align leading content with the title (`start`) or with the whole row (`center`). */
+  leadingAlign?: "start" | "center";
 }
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground";
 
 export const CollapsibleList = React.forwardRef<HTMLDivElement, CollapsibleListProps>(
-  ({ groups, emptyMessage = "No items.", className, ...props }, ref) => (
+  ({ groups, emptyMessage = "No items.", leadingAlign = "start", className, ...props }, ref) => (
     <div ref={ref} data-slot="collapsible-list" className={cn("@container space-y-6 bg-background text-foreground", className)} {...props}>
       {groups.map((group) => (
         <details key={group.id} open={group.defaultOpen ?? true} data-slot="collapsible-list-group" className="group">
@@ -49,15 +51,25 @@ export const CollapsibleList = React.forwardRef<HTMLDivElement, CollapsibleListP
             </span>
           </summary>
           {group.items.length > 0 ? (
-            <ul aria-label={group.label}>
+            <ul aria-label={group.label} className="mt-1 space-y-1">
               {group.items.map((item) => (
-                <li key={item.id} data-slot="collapsible-list-item" className="flex items-start gap-3 px-6 py-4 [overflow-wrap:anywhere]">
-                  {item.leading && <span data-slot="collapsible-list-leading" aria-hidden="true" className="mt-0.5 flex size-4 shrink-0 items-center justify-center">{item.leading}</span>}
+                <li key={item.id} data-slot="collapsible-list-item"
+                  className={cn(
+                    "flex items-start gap-3 px-6 py-4 [overflow-wrap:anywhere]",
+                    item.href !== undefined && "relative rounded-lg hover:bg-foreground/5 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:-outline-offset-2 has-[a:focus-visible]:outline-foreground",
+                  )}>
+                  {item.leading && (
+                    <span data-slot="collapsible-list-leading" aria-hidden="true"
+                      className={cn(
+                        "flex w-4 shrink-0 items-center justify-center",
+                        leadingAlign === "center" ? "h-4 self-center" : item.href !== undefined ? "h-6" : "h-5",
+                      )}>{item.leading}</span>
+                  )}
                   <div className="flex min-w-0 flex-1 flex-col gap-2 @lg:flex-row @lg:items-end @lg:gap-6">
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-medium">
                         {item.href !== undefined ? (
-                          <a href={item.href} className={cn("inline-flex min-h-6 items-center rounded-sm underline-offset-4 hover:underline", focus)}>{item.title}</a>
+                          <a href={item.href} className="inline-flex min-h-6 items-center rounded-sm after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none">{item.title}</a>
                         ) : item.title}
                       </div>
                       {item.description && <div className="text-xs text-foreground/70">{item.description}</div>}

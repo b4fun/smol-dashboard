@@ -138,9 +138,10 @@ function ToolUseExample() {
   );
 }
 
-function ChatExample({ initialMessages = openingMessage, initialLoading = false, defaultDraft = "", headerActions, composerActions, footer }: {
+function ChatExample({ initialMessages = openingMessage, initialLoading = false, disabled = false, defaultDraft = "", headerActions, composerActions, footer }: {
   initialMessages?: ChatMessage[];
   initialLoading?: boolean;
+  disabled?: boolean;
   defaultDraft?: string;
   headerActions?: ReactNode;
   composerActions?: ReactNode;
@@ -172,6 +173,7 @@ function ChatExample({ initialMessages = openingMessage, initialLoading = false,
       messages={messages}
       onSend={sendMessage}
       isLoading={isLoading}
+      disabled={disabled}
       defaultDraft={defaultDraft}
       className="mx-auto h-[min(calc(100dvh-4rem),720px)] w-full max-w-3xl border border-border sm:rounded-2xl"
     />
@@ -193,6 +195,9 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = { render: () => <ChatExample key="playground" /> };
 export const Empty: Story = { render: () => <ChatExample key="empty" initialMessages={[]} /> };
 export const Loading: Story = { render: () => <ChatExample key="loading" initialLoading /> };
+export const Disabled: Story = {
+  render: () => <ChatExample key="disabled" disabled footer="This conversation is read-only." />,
+};
 export const Dark: Story = { ...Playground, globals: { theme: "dark" } };
 export const HeaderActions: Story = {
   render: () => <ChatExample headerActions={<ModelMenu />} />,
@@ -255,3 +260,30 @@ export const LongConversation: Story = {
       : "Start with a small, working version.\n\n1. Define the main goal.\n2. Build one complete interaction.\n3. Review the result before adding more features.",
   }))} />,
 };
+
+function RejectedSendExample() {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [error, setError] = useState("");
+
+  const sendMessage = (content: string) => {
+    if (content.length > 40) {
+      setError("Keep messages to 40 characters or fewer. Your draft was kept.");
+      return false;
+    }
+
+    setError("");
+    setMessages((current) => [...current, { id: `message-${current.length}`, role: "user", content }]);
+  };
+
+  return (
+    <Chat
+      title="Short messages"
+      messages={messages}
+      onSend={sendMessage}
+      footer={<span role="status">{error || "Messages over 40 characters are rejected."}</span>}
+      className="mx-auto h-[min(calc(100dvh-4rem),720px)] w-full max-w-3xl border border-border sm:rounded-2xl"
+    />
+  );
+}
+
+export const RejectedSend: Story = { render: () => <RejectedSendExample /> };

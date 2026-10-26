@@ -64,6 +64,18 @@ export const Minimal: Story = {
 };
 export const Dark: Story = { globals: { theme: "dark" } };
 
+const brandIcon = (
+  <span aria-hidden="true" className="flex size-6 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">◈</span>
+);
+
+export const WithBrandIcon: Story = {
+  args: {
+    brand: <span className="flex items-center gap-2">{brandIcon}smol dashboard</span>,
+    brandIcon,
+    defaultSidebarOpen: false,
+  },
+};
+
 export const WithBreadcrumbs: Story = {
   args: {
     title: "Website refresh — Review the launch checklist",
